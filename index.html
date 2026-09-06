@@ -908,13 +908,14 @@
                     finalNameStr = `FAMILIA ${guestFullName}`;
                     willAttend = true;
                 } else {
-                    asistenciaTexto = "NO ASISTE GRUPO FAMILIAR";
+                    asistenciaTexto = "NO ASISTEN";
                     finalNameStr = `FAMILIA ${guestFullName}`;
                     willAttend = false;
                 }
             } else {
                 if (optionVal === "todos") {
-                    asistenciaTexto = allGuestsList.length > 1 ? "SÍ ASISTEN TODOS" : "SÍ ASISTE";
+                    const totalCount = allGuestsList.length > 0 ? allGuestsList.length : 1;
+                    asistenciaTexto = allGuestsList.length > 1 ? `SÍ ASISTEN TODOS (${totalCount})` : `SÍ ASISTE (${totalCount})`;
                     willAttend = true;
                 } else if (optionVal === "parcial") {
                     let asistentes = [];
@@ -930,11 +931,11 @@
                         return;
                     }
 
-                    asistenciaTexto = `ASISTEN: ${formatNamesList(asistentes)} (NO ASISTE: ${formatNamesList(noAsistentes)})`;
+                    asistenciaTexto = `ASISTEN (${asistentes.length}): ${formatNamesList(asistentes)} (NO ASISTE: ${formatNamesList(noAsistentes)})`;
                     finalNameStr = formatNamesList(asistentes);
                     willAttend = true;
                 } else {
-                    asistenciaTexto = "NO ASISTEN";
+                    asistenciaTexto = "NO ASISTEN (0)";
                     willAttend = false;
                 }
             }
