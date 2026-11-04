@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="es" class="dark scroll-smooth overflow-x-hidden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Información Oficial - C&E '27</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { neon: { cyan: '#00f3ff', green: '#39ff14', magenta: '#ff007f', orange: '#ff5e00', purple: '#b026ff', red: '#ff003c' } }, fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Syne', 'sans-serif'], mono: ['Space Mono', 'monospace'] } } } }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; color: #e2e8f0; min-height: 100vh; margin: 0; background-color: #050104; overflow-x: hidden; }
+        .absolute-fixed-sunset { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background-image: linear-gradient(to bottom, rgba(20, 5, 2, 0.4) 20%, rgba(10, 2, 5, 0.8) 75%, #050104 100%), url('sunset.png'); background-size: cover; background-position: center bottom; z-index: -2; filter: contrast(115%) brightness(85%) saturate(110%); }
+        .scanline { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 127, 0.02), rgba(0, 243, 255, 0.02)); background-size: 100% 4px, 6px 100%; pointer-events: none; z-index: -1; }
+        #forestCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; pointer-events: none; z-index: 0; opacity: 0.8; }
+        .font-display { font-family: 'Syne', sans-serif; } .font-mono-code { font-family: 'Space Mono', monospace; }
+        .glass-card { background: rgba(15, 3, 7, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1.5px solid rgba(255, 94, 0, 0.75); box-shadow: 0 0 20px rgba(255, 94, 0, 0.15), inset 0 0 10px rgba(255, 94, 0, 0.05); transition: all 0.4s ease; }
+        .glass-card-neon { background: rgba(20, 5, 10, 0.9); backdrop-filter: blur(16px); border: 2px solid rgba(255, 94, 0, 0.85); box-shadow: 0 0 35px rgba(255, 94, 0, 0.25), 0 0 60px rgba(255, 0, 127, 0.15), inset 0 0 15px rgba(255, 94, 0, 0.1); transition: all 0.4s ease; }
+        .glow-text-orange { color: #ffffff; text-shadow: 0 0 10px #ff5e00, 0 0 20px #ff5e00; transition: text-shadow 0.3s ease; } .glow-text-cyan { color: #ffffff; text-shadow: 0 0 10px #00f3ff, 0 0 20px #00f3ff; transition: text-shadow 0.3s ease; } .glow-text-green { color: #ffffff; text-shadow: 0 0 10px #39ff14, 0 0 20px #39ff14; transition: text-shadow 0.3s ease; } .glow-text-magenta { color: #ffffff; text-shadow: 0 0 10px #ff007f, 0 0 20px #ff007f; transition: text-shadow 0.3s ease; } .glow-text-red { color: #ffffff; text-shadow: 0 0 10px #ff003c, 0 0 20px #ff003c; transition: text-shadow 0.3s ease; } .glow-text-purple { color: #ffffff; text-shadow: 0 0 10px #b026ff, 0 0 20px #b026ff; transition: text-shadow 0.3s ease; }
+        .hover-glow-cyan:hover { box-shadow: 0 0 25px rgba(0, 243, 255, 0.4), inset 0 0 10px rgba(0, 243, 255, 0.15) !important; border-color: rgba(0, 243, 255, 0.8) !important; transform: translateY(-2px); } .hover-glow-green:hover { box-shadow: 0 0 25px rgba(57, 255, 20, 0.4), inset 0 0 10px rgba(57, 255, 20, 0.15) !important; border-color: rgba(57, 255, 20, 0.8) !important; transform: translateY(-2px); } .hover-glow-orange:hover { box-shadow: 0 0 25px rgba(255, 94, 0, 0.4), inset 0 0 10px rgba(255, 94, 0, 0.15) !important; border-color: rgba(255, 94, 0, 0.8) !important; transform: translateY(-2px); } .hover-glow-magenta:hover { box-shadow: 0 0 25px rgba(255, 0, 127, 0.4), inset 0 0 10px rgba(255, 0, 127, 0.15) !important; border-color: rgba(255, 0, 127, 0.8) !important; transform: translateY(-2px); } .hover-glow-red:hover { box-shadow: 0 0 25px rgba(255, 0, 60, 0.4), inset 0 0 10px rgba(255, 0, 60, 0.15) !important; border-color: rgba(255, 0, 60, 0.8) !important; transform: translateY(-2px); } .hover-glow-purple:hover { box-shadow: 0 0 25px rgba(176, 38, 255, 0.4), inset 0 0 10px rgba(176, 38, 255, 0.15) !important; border-color: rgba(176, 38, 255, 0.8) !important; transform: translateY(-2px); }
+        .hover-name-catalina, .hover-name-ernesto, .hover-name-ampersand { transition: all 0.4s ease; cursor: default; display: inline-block; } .hover-name-catalina:hover { transform: scale(1.08); text-shadow: 0 0 20px #ff5e00, 0 0 40px #ff5e00; } .hover-name-ernesto:hover { transform: scale(1.08); text-shadow: 0 0 20px #39ff14, 0 0 40px #39ff14; } .hover-name-ampersand:hover { transform: scale(1.08); text-shadow: 0 0 20px #00f3ff, 0 0 40px #00f3ff; }
+        .accordion-btn { width: 100%; padding: 1.25rem 1.5rem; border-radius: 1rem; background: rgba(20, 5, 10, 0.95); backdrop-filter: blur(12px); border: 2px solid; display: flex; align-items: center; justify-content: space-between; font-family: 'Syne', sans-serif; font-weight: 800; text-transform: uppercase; font-size: 1.25rem; transition: all 0.3s ease; cursor: pointer; color: white !important; position: relative; z-index: 10; } .accordion-btn:hover { transform: scale(1.01); filter: brightness(1.15); }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out, opacity 0.5s ease; opacity: 0; position: relative; z-index: 5; } .accordion-content.open { opacity: 1; } 
+        .vumeter-container { display: flex; align-items: flex-end; gap: 2px; height: 28px; padding: 4px 8px; background: rgba(10, 2, 5, 0.95); border: 1.5px solid rgba(255, 94, 0, 0.75); border-radius: 9px; box-shadow: 0 0 15px rgba(255, 94, 0, 0.4); } @media (min-width: 640px) { .vumeter-container { gap: 2.5px; height: 32px; padding: 4px 10px; } } .vumeter-bar { width: 3px; background: #ff5e00; border-radius: 2px; height: 4px; transition: height 0.05s ease; box-shadow: 0 0 8px #ff5e00; } @media (min-width: 640px) { .vumeter-bar { width: 3.5px; } } .vumeter-bar:nth-child(even) { background: #00f3ff; box-shadow: 0 0 8px #00f3ff; } .vumeter-bar:nth-child(3n) { background: #ff007f; box-shadow: 0 0 8px #ff007f; } .vumeter-bar:nth-child(4n) { background: #39ff14; box-shadow: 0 0 8px #39ff14; }
+        .btn-radio-rsvp { transition: all 0.2s ease; cursor: pointer; } .btn-radio-rsvp.selected-yes { background-color: #39ff14; color: black; box-shadow: 0 0 15px #39ff14; border-color: #39ff14; } .btn-radio-rsvp.selected-no { background-color: #ff003c; color: white; box-shadow: 0 0 15px #ff003c; border-color: #ff003c; }
+        .loader { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid #00f3ff; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; } @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .filter-btn { opacity: 0.5; transition: all 0.3s ease; } .filter-btn.active { opacity: 1; box-shadow: 0 0 10px currentColor; } .nav-link { transition: all 0.2s ease; } .nav-link:hover { transform: translateY(-2px); filter: drop-shadow(0 0 8px currentColor); color: white; }
+    </style>
+</head>
+<body class="selection:bg-neon-orange selection:text-black relative w-full overflow-x-hidden">
+
+    <div class="absolute-fixed-sunset"></div>
+    <div class="scanline"></div>
+    <canvas id="forestCanvas"></canvas>
+
+    <header class="fixed top-0 left-0 right-0 z-50 px-2 sm:px-4 py-3 bg-[#1f060f]/95 backdrop-blur-md border-b border-orange-900/40 w-full">
+        <div class="max-w-7xl mx-auto flex items-center justify-between w-full gap-2">
+            <div class="flex items-center flex-1 justify-start">
+                <div class="vumeter-container" id="vumeter">
+                    <div class="vumeter-bar"></div><div class="vumeter-bar"></div><div class="vumeter-bar"></div><div class="vumeter-bar"></div>
+                    <div class="vumeter-bar"></div><div class="vumeter-bar"></div><div class="vumeter-bar"></div><div class="vumeter-bar"></div>
+                    <div class="vumeter-bar"></div><div class="vumeter-bar"></div><div class="vumeter-bar"></div><div class="vumeter-bar"></div>
+                    <div class="vumeter-bar"></div><div class="vumeter-bar"></div><div class="vumeter-bar"></div><div class="vumeter-bar"></div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-center shrink-0">
+                <div class="flex items-center gap-1 sm:gap-3 bg-[#14050a]/90 px-2 sm:px-3 py-1.5 rounded-xl border border-orange-500/40 shadow-[0_0_15px_rgba(255,94,0,0.2)]">
+                    <button onclick="toggleAudio()" id="playBtn" class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-neon-orange text-black flex items-center justify-center font-bold shadow-[0_0_10px_rgba(255,94,0,0.8)] hover:scale-105 transition-all text-xs sm:text-base">▶</button>
+                    <div class="flex items-center gap-1 pl-1 sm:pl-2 border-l border-orange-500/30">
+                        <span class="text-[10px] text-orange-400">🔊</span>
+                        <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.8" onchange="adjustVolume(this.value)" class="w-12 sm:w-20 accent-[#ff5e00] cursor-pointer h-1 bg-gray-700 rounded-lg">
+                    </div>
+                    <audio id="bgAudio" loop preload="auto"><source src="cancion.mp3" type="audio/mp3"></audio>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-3 sm:gap-4 font-mono-code flex-1 px-1 sm:px-2">
+                <a href="#seccion-oficial" class="text-neon-cyan nav-link flex items-center gap-1" title="Info"><i data-lucide="info" class="w-4 h-4 sm:w-5 sm:h-5"></i></a>
+                <a href="#seccion-dresscode" class="text-neon-green nav-link flex items-center gap-1" title="Dress Code"><i data-lucide="shirt" class="w-4 h-4 sm:w-5 sm:h-5"></i></a>
+                <a href="#seccion-lineup" class="text-neon-orange nav-link flex items-center gap-1" title="Set Up"><i data-lucide="music" class="w-4 h-4 sm:w-5 sm:h-5"></i></a>
+                <a href="#seccion-ruta" class="text-neon-red nav-link flex items-center gap-1" title="Ruta"><i data-lucide="map" class="w-4 h-4 sm:w-5 sm:h-5"></i></a>
+                <a href="#seccion-dormir" class="text-neon-magenta nav-link flex items-center gap-1" title="Dormir"><i data-lucide="home" class="w-4 h-4 sm:w-5 sm:h-5"></i></a>
+                <a href="#seccion-regalo" class="text-neon-purple nav-link flex items-center gap-1" title="Regalo"><i data-lucide="gift" class="w-4 h-4 sm:w-5 sm:h-5"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <main class="relative z-30 pt-28 pb-20 max-w-4xl mx-auto px-3 sm:px-6 flex flex-col items-center w-full overflow-hidden">
+        
+        <section class="w-full flex flex-col justify-center items-center text-center py-8 mb-6 relative z-10">
+            <div class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full glass-card border-neon-orange/60 mb-4 hover-glow-orange transition-all">
+                <i data-lucide="sparkles" class="w-4 h-4 text-neon-orange glow-text-orange"></i>
+                <span class="text-[10px] sm:text-xs md:text-sm font-mono-code text-orange-200 tracking-widest uppercase font-bold glow-text-orange">
+                    EDICIÓN LIMITADA EN LA NATURALEZA
+                </span>
+            </div>
+
+            <div class="w-full flex flex-col sm:flex-row items-center justify-center mb-2 gap-y-2 sm:gap-y-0">
+                <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-display font-extrabold uppercase tracking-tight text-white leading-none select-none">
+                    <span class="glow-text-orange hover-name-catalina block sm:inline-block">CATALINA</span> 
+                    <span class="glow-text-cyan text-4xl sm:text-5xl md:text-6xl font-sans px-1 sm:px-2 block sm:inline-block hover-name-ampersand">&</span> 
+                    <span class="glow-text-green hover-name-ernesto block sm:inline-block">ERNESTO</span>
+                </h1>
+            </div>
+
+            <p class="text-xs sm:text-sm font-mono-code text-orange-300 tracking-widest uppercase font-bold glow-text-orange mt-2">
+                AMOR, AMIGOS, FAMILIA Y FIESTA
+            </p>
+        </section>
+
+        <!-- ACORDEONES MAESTROS -->
+        <div class="w-full space-y-5 relative z-20">
+
+            <!-- 1. INFO OFICIAL & RSVP CABROS -->
+            <div id="seccion-oficial" class="w-full scroll-mt-24">
+                <button class="accordion-btn border-neon-cyan hover-glow-cyan shadow-[0_0_15px_rgba(0,243,255,0.3)]" onclick="toggleAccordion('content-oficial', 'icon-oficial')">
+                    <span class="flex items-center gap-3 glow-text-cyan"><i data-lucide="info" class="w-6 h-6"></i> Info Oficial</span>
+                    <i data-lucide="chevron-down" id="icon-oficial" class="w-6 h-6 text-neon-cyan transition-transform duration-300"></i>
+                </button>
+                <div id="content-oficial" class="accordion-content">
+                    <div class="glass-card-neon p-6 sm:p-8 rounded-b-3xl border-t-0 border-neon-cyan/50 mt-1 text-center">
+                        <h2 id="mensaje-bienvenida" class="text-lg md:text-xl text-white font-bold mb-4 uppercase glow-text-cyan">¡Hola!</h2>
+                        <p id="intro-text" class="text-sm md:text-base text-gray-200 leading-relaxed font-mono-code tracking-wide">
+                            Los invitamos a sumergirse en la experiencia de nuestra celebración el próximo <strong class="glow-text-cyan font-bold">sábado 16 de enero de 2027</strong>. Sabemos que llegar hasta este rincón del Maule es un viaje y valoramos profundamente el esfuerzo, la energía y las ganas de acompañarnos. 
+                            <br><br>
+                            Este terreno guarda mucha historia familiar, y abrirlo para ustedes es nuestra forma de invitarlos a desconectarse de la rutina para compartir, disfrutar y vivir este gran día de la manera más relajada y cercana posible.
+                        </p>
+                    </div>
+
+                    <div id="modulo-fiesta-cabros" class="hidden mt-4 glass-card p-6 rounded-3xl border-neon-magenta shadow-[0_0_20px_rgba(255,0,127,0.3)] text-center relative overflow-hidden hover-glow-magenta transition-all">
+                        <i data-lucide="music" class="absolute -right-4 -bottom-4 w-24 h-24 text-neon-magenta/10"></i>
+                        <h3 class="text-neon-magenta font-extrabold uppercase text-lg mb-3 glow-text-magenta flex items-center justify-center gap-2">
+                            <i data-lucide="ticket" class="w-5 h-5"></i> Pase Especial Fiesta
+                        </h3>
+                        <p id="texto-nombres-cabros" class="text-sm text-gray-200 font-mono-code mb-5">
+                            ¡Tenemos una invitación especial! Nos encantaría que se sumen a la fiesta a partir de las 21:00 hrs para darlo todo en la pista.
+                        </p>
+                        <div id="lista-cabros-rsvp" class="flex flex-col gap-3 max-w-sm mx-auto z-10 relative"></div>
+                        <button id="btn-enviar-fiesta" onclick="enviarRSVPFiesta()" class="mt-5 hidden mx-auto px-6 py-3 rounded-xl bg-neon-magenta text-black font-extrabold text-xs uppercase hover:scale-105 transition-all shadow-[0_0_15px_#ff007f]">
+                            Confirmar Pase <span class="loader hidden ml-2" id="loader-fiesta"></span>
+                        </button>
+                        <p id="msg-exito-fiesta" class="hidden mt-3 text-neon-green text-xs font-bold uppercase glow-text-green"><i data-lucide="check" class="inline w-4 h-4"></i> Respuesta Actualizada</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. DRESS CODE -->
+            <div id="seccion-dresscode" class="w-full scroll-mt-24">
+                <button class="accordion-btn border-neon-green hover-glow-green shadow-[0_0_15px_rgba(57,255,20,0.3)]" onclick="toggleAccordion('content-dresscode', 'icon-dresscode')">
+                    <span class="flex items-center gap-3 glow-text-green"><i data-lucide="shirt" class="w-6 h-6"></i> Dress Code</span>
+                    <i data-lucide="chevron-down" id="icon-dresscode" class="w-6 h-6 text-neon-green transition-transform duration-300"></i>
+                </button>
+                <div id="content-dresscode" class="accordion-content">
+                    <div class="bg-[#050104]/80 p-5 sm:p-6 rounded-b-3xl border border-t-0 border-neon-green/50 mt-1 space-y-6 backdrop-blur-md">
+                        
+                        <div class="text-center space-y-4">
+                            <p class="text-sm text-gray-200 font-mono-code px-2 leading-relaxed">
+                                <strong class="text-neon-green glow-text-green">¡Ponte tu outfit más alegre y brillante!</strong> La consigna es darle color a la fiesta: tonos vibrantes, destellos, metalizados y mucha actitud.
+                            </p>
+                            <p class="text-sm text-gray-200 font-mono-code px-2 leading-relaxed">
+                                🎨 Te invitamos a dejar el blanco y el negro guardados en el clóset y animarte a combinar colores fuertes o estampados únicos. Olvídate de la formalidad y ven con ropa cómoda para disfrutar al máximo de la pista. 🪩✨
+                            </p>
+                        </div>
+
+                        <div class="bg-[#020a0a]/50 border border-neon-purple/40 p-4 sm:p-5 rounded-2xl text-center shadow-[0_0_15px_rgba(176,38,255,0.2)] hover-glow-purple transition-all duration-300">
+                            <h3 class="text-white font-bold mb-3 uppercase text-sm glow-text-purple flex justify-center items-center gap-2">
+                                <i data-lucide="palette" class="w-5 h-5 text-neon-purple"></i> Inspiración & Moodboard
+                            </h3>
+                            <p class="text-[11px] sm:text-xs text-gray-300 font-mono-code mb-4 uppercase tracking-wider">💡 Descubre ideas, paletas y estilos en nuestras tarjetas de Pinterest:</p>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <a href="https://cl.pinterest.com/pin/205687907978525102/" target="_blank" class="block relative h-48 rounded-xl overflow-hidden border-2 border-neon-orange/60 hover-glow-orange transition-all shadow-[0_0_15px_rgba(255,94,0,0.3)] group bg-black">
+                                    <img src="dress1.png" alt="Inspiración Dress Code 1" class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+                                    <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        <span class="text-black font-extrabold text-xs uppercase tracking-wider bg-neon-orange px-4 py-2 rounded-lg shadow-[0_0_10px_#ff5e00]"><i data-lucide="image" class="w-4 h-4 inline-block mr-1"></i> Ver Idea 1</span>
+                                    </div>
+                                </a>
+                                <a href="https://cl.pinterest.com/pin/3870349676055538/" target="_blank" class="block relative h-48 rounded-xl overflow-hidden border-2 border-neon-cyan/60 hover-glow-cyan transition-all shadow-[0_0_15px_rgba(0,243,255,0.3)] group bg-black">
+                                    <img src="dress2.png" alt="Inspiración Dress Code 2" class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+                                    <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        <span class="text-black font-extrabold text-xs uppercase tracking-wider bg-neon-cyan px-4 py-2 rounded-lg shadow-[0_0_10px_#00f3ff]"><i data-lucide="image" class="w-4 h-4 inline-block mr-1"></i> Ver Idea 2</span>
+                                    </div>
+                                </a>
+                                <a href="https://cl.pinterest.com/pin/629941066672866147/" target="_blank" class="block relative h-48 rounded-xl overflow-hidden border-2 border-neon-magenta/60 hover-glow-magenta transition-all shadow-[0_0_15px_rgba(255,0,127,0.3)] group bg-black">
+                                    <img src="dress3.png" alt="Inspiración Dress Code 3" class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+                                    <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        <span class="text-black font-extrabold text-xs uppercase tracking-wider bg-neon-magenta px-4 py-2 rounded-lg shadow-[0_0_10px_#ff007f]"><i data-lucide="image" class="w-4 h-4 inline-block mr-1"></i> Ver Idea 3</span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                            <div class="bg-[#1f0a02]/60 border border-neon-orange/40 p-5 rounded-2xl text-center hover-glow-orange transition-all duration-300">
+                                <i data-lucide="footprints" class="w-8 h-8 text-neon-orange mx-auto mb-3"></i>
+                                <h3 class="text-white font-bold mb-2 uppercase text-sm glow-text-orange">Calzado</h3>
+                                <p class="text-xs text-gray-300 font-mono-code">Zapatos cómodos: vamos a bailar y el terreno de tierra natural es parte de la experiencia. <em>Sugerimos evitar tacos muy finos.</em></p>
+                            </div>
+                            <div class="bg-[#020a0a]/60 border border-neon-cyan/40 p-5 rounded-2xl text-center hover-glow-cyan transition-all duration-300">
+                                <i data-lucide="thermometer-snowflake" class="w-8 h-8 text-neon-cyan mx-auto mb-3"></i>
+                                <h3 class="text-white font-bold mb-2 uppercase text-sm glow-text-cyan">Abrigo</h3>
+                                <p class="text-xs text-gray-300 font-mono-code">Cuando caiga el sol puede refrescar bastante por la brisa costera, así que trae algo abrigador para disfrutar de la madrugada.</p>
+                            </div>
+                            <div class="bg-[#100510]/60 border border-neon-magenta/40 p-5 rounded-2xl text-center hover-glow-magenta transition-all duration-300">
+                                <i data-lucide="sparkles" class="w-8 h-8 text-neon-magenta mx-auto mb-3"></i>
+                                <h3 class="text-white font-bold mb-2 uppercase text-sm glow-text-magenta">Actitud</h3>
+                                <p class="text-xs text-gray-300 font-mono-code">Libre, cómoda y brillante. La única regla es venir con ganas de celebrar y pasarlo increíble.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. EL SET UP -->
+            <div id="seccion-lineup" class="w-full scroll-mt-24">
+                <button class="accordion-btn border-neon-orange hover-glow-orange shadow-[0_0_15px_rgba(255,94,0,0.3)]" onclick="toggleAccordion('content-lineup', 'icon-lineup')">
+                    <span class="flex items-center gap-3 glow-text-orange"><i data-lucide="music" class="w-6 h-6"></i> El Set Up</span>
+                    <i data-lucide="chevron-down" id="icon-lineup" class="w-6 h-6 text-neon-orange transition-transform duration-300"></i>
+                </button>
+                <div id="content-lineup" class="accordion-content">
+                    <div class="mt-2 space-y-3 font-mono-code px-1 pb-4">
+                        <div class="bg-[#020a0a]/80 p-4 rounded-2xl border-l-4 border-l-neon-cyan border border-neon-cyan/20 flex items-center gap-3 text-left hover-glow-cyan transition-all">
+                            <div class="w-16 text-center text-neon-cyan font-bold text-xl glow-text-cyan">17:00</div>
+                            <div><h3 class="text-sm font-bold text-white uppercase">La Recepción</h3><p class="text-[10px] sm:text-xs text-gray-300 mt-1">Para compartir un trago, conversar y entrar en sintonía.</p></div>
+                        </div>
+                        <div class="bg-[#051005]/80 p-4 rounded-2xl border-l-4 border-l-neon-green border border-neon-green/20 flex items-center gap-3 text-left hover-glow-green transition-all">
+                            <div class="w-16 text-center text-neon-green font-bold text-xl glow-text-green">18:00</div>
+                            <div><h3 class="text-sm font-bold text-white uppercase">La Ceremonia</h3><p class="text-[10px] sm:text-xs text-gray-300 mt-1">Nuestro momento íntimo y especial con todos ustedes.</p></div>
+                        </div>
+                        <div class="bg-[#100510]/80 p-4 rounded-2xl border-l-4 border-l-neon-magenta border border-neon-magenta/20 flex items-center gap-3 text-left hover-glow-magenta transition-all">
+                            <div class="w-16 text-center text-neon-magenta font-bold text-xl glow-text-magenta">18:30</div>
+                            <div><h3 class="text-sm font-bold text-white uppercase">Triversos Trivergentes</h3><p class="text-[10px] sm:text-xs text-gray-300 mt-1">Un viaje sonoro lleno de melodías, ritmos y armonías únicas. El cuarteto perfecto para acompañar el atardecer.</p></div>
+                        </div>
+                        <div class="bg-[#0a0210]/80 p-4 rounded-2xl border-l-4 border-l-neon-purple border border-neon-purple/20 flex items-center gap-3 text-left hover-glow-purple transition-all">
+                            <div class="w-16 text-center text-neon-purple font-bold text-xl glow-text-purple">20:00</div>
+                            <div><h3 class="text-sm font-bold text-white uppercase">La Cena</h3><p class="text-[10px] sm:text-xs text-gray-300 mt-1">Buena comida en familia para prepararnos para la noche.</p></div>
+                        </div>
+                        <div class="bg-[#1f0a02]/80 p-4 rounded-2xl border-l-4 border-l-neon-orange border border-neon-orange/20 flex items-center gap-3 text-left hover-glow-orange transition-all">
+                            <div class="w-16 text-center text-neon-orange font-bold text-xl glow-text-orange">21:30</div>
+                            <div><h3 class="text-sm font-bold text-white uppercase">Los Clásicos Bailables</h3><p class="text-[10px] sm:text-xs text-gray-300 mt-1">Cumbias, corridos y los infaltables de siempre. ¡A la pista!</p></div>
+                        </div>
+                        <div class="bg-[#020a0a]/80 p-4 rounded-2xl border-l-4 border-l-neon-cyan border border-neon-cyan/20 flex items-center gap-3 text-left hover-glow-cyan transition-all">
+                            <div class="w-16 text-center text-neon-cyan font-bold text-xl glow-text-cyan">23:30</div>
+                            <div><h3 class="text-sm font-bold text-white uppercase flex items-center gap-2">DJ KEVIN DECK</h3><p class="text-[10px] sm:text-xs text-gray-300 mt-1">Transición perfecta: ultrabailable cruzado con electrónica.</p></div>
+                        </div>
+                        <div class="bg-[#051005]/80 p-4 rounded-2xl border-l-4 border-l-neon-green border border-neon-green/20 flex items-center gap-3 text-left hover-glow-green transition-all">
+                            <div class="w-16 text-center text-neon-green font-bold text-xl glow-text-green">01:30</div>
+                            <div><h3 class="text-sm font-bold text-white uppercase">DJ ARLOZ</h3><p class="text-[10px] sm:text-xs text-gray-300 mt-1">Sube el ritmo. Lo sabrosito y el groove se toman el campo.</p></div>
+                        </div>
+                        <div class="bg-[#100510]/80 p-4 rounded-2xl border-l-4 border-l-neon-magenta border border-neon-magenta/20 flex items-center gap-3 text-left hover-glow-magenta transition-all">
+                            <div class="w-16 text-center text-neon-magenta font-bold text-xl glow-text-magenta">03:00</div>
+                            <div><h3 class="text-sm font-bold text-white uppercase flex items-center gap-2">El Trasnoche <i data-lucide="soup" class="w-4 h-4 text-neon-magenta"></i></h3><p class="text-[10px] sm:text-xs text-gray-300 mt-1">Consomé y tapaditos salvadores para los de aguante.</p></div>
+                        </div>
+                        <div class="bg-[#1f0005]/80 p-4 rounded-2xl border-l-4 border-l-neon-red border border-neon-red/20 flex items-center gap-3 text-left hover-glow-red transition-all">
+                            <div class="w-16 text-center text-neon-red font-bold text-xl glow-text-red">03:30</div>
+                            <div><h3 class="text-sm font-bold text-white uppercase">DJ A-KTOR</h3><p class="text-[10px] sm:text-xs text-gray-300 mt-1">Beats oscuros y contundentes. Viaje hacia el lado duro de la pista.</p></div>
+                        </div>
+                        <div class="bg-[#0a0210]/80 p-4 rounded-2xl border-l-4 border-l-neon-purple border border-neon-purple/20 flex items-center gap-3 text-left hover-glow-purple transition-all">
+                            <div class="w-16 text-center text-neon-purple font-bold text-xl glow-text-purple">05:30</div>
+                            <div><h3 class="text-sm font-bold text-white uppercase">Cabina Libre</h3><p class="text-[10px] sm:text-xs text-gray-300 mt-1">Open Decks para los sobrevivientes. El que quedó vivo, que ponga música.</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. RUTA Y TRANSPORTE -->
+            <div id="seccion-ruta" class="w-full scroll-mt-24">
+                <button class="accordion-btn border-neon-red hover-glow-red shadow-[0_0_15px_rgba(255,0,60,0.3)]" onclick="toggleAccordion('content-ruta', 'icon-ruta')">
+                    <span class="flex items-center gap-3 glow-text-red"><i data-lucide="map" class="w-6 h-6"></i> Ubicación & Transporte</span>
+                    <i data-lucide="chevron-down" id="icon-ruta" class="w-6 h-6 text-neon-red transition-transform duration-300"></i>
+                </button>
+                <div id="content-ruta" class="accordion-content">
+                    <div class="bg-[#050104]/80 p-4 sm:p-6 rounded-b-3xl border border-t-0 border-neon-red/50 mt-1 space-y-6 backdrop-blur-md">
+                        
+                        <div class="bg-[#1f0005]/60 border border-neon-red/40 p-5 rounded-2xl text-left hover-glow-red transition-all">
+                            <h3 class="text-white font-bold text-base uppercase mb-3 flex items-center gap-2 glow-text-red"><i data-lucide="car" class="w-5 h-5 text-neon-red"></i> Llegar en Auto</h3>
+                            
+                            <div class="mb-4 text-center">
+                                <p class="text-sm font-bold text-neon-red font-mono-code mb-2 glow-text-red tracking-wider">📍 LOS PEUMOS, CHANCO, MAULE COSTERO</p>
+                                <div class="w-full h-48 rounded-xl overflow-hidden border border-neon-red/50 shadow-[0_0_15px_rgba(255,0,60,0.3)]">
+                                    <iframe src="https://maps.google.com/maps?q=-35.667295,-72.478043&hl=es&z=14&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4 flex flex-col items-center">
+                                <a href="https://www.google.com/maps/dir/Chanco+entrada+Norte+-+Balmaceda+235,+Chanco,+Maule/Humedal+(Patos+y+Ranas),+Punchema,+Chanco,+Maule/Chanco+Norte+Entel+-+M-320,+Chanco,+Maule/-35.667295,-72.478043/@-35.6966721,-72.5441614,10824m/data=!3m1!1e3!4m21!4m20!1m5!1m1!1s0x96663727a55cf4c9:0xfb73969d34dcc50c!2m2!1d-72.530937!2d-35.729499!1m5!1m1!1s0x966637003876db39:0xe451b2a15c9daa8b!2m2!1d-72.5310661!2d-35.6955403!1m5!1m1!1s0x9666390073d27249:0x4f68d6ab2a8f1106!2m2!1d-72.518315!2d-35.6924226!1m0!3e0!18m1!1e1?entry=ttu" target="_blank" class="w-full py-3 px-4 rounded-xl bg-black border border-gray-700 text-white font-bold text-xs sm:text-sm uppercase flex items-center justify-center gap-4 hover:border-neon-cyan transition-all shadow-[0_0_15px_rgba(0,0,0,0.5)] group">
+                                    <img src="https://img.icons8.com/color/96/google-maps-new.png" alt="Google Maps" class="w-12 h-12 group-hover:scale-110 transition-transform drop-shadow-lg">
+                                    <span class="group-hover:text-neon-cyan transition-colors">Abrir en Google Maps</span>
+                                </a>
+                                
+                                <div class="w-full bg-[#05101a] border border-blue-500/30 p-4 rounded-xl flex flex-col items-center">
+                                    <div class="bg-red-900/30 border border-red-500/50 p-2 rounded-lg mb-4 w-full">
+                                        <p class="text-[10px] sm:text-xs text-red-200 font-mono-code uppercase font-bold text-center">
+                                            ⚠️ ATENCIÓN: Waze te entregará 3 opciones. Asegúrate de seleccionar manualmente la "Ruta 3" (Ruta M-50; Ruta M-448). No elijas la que el mapa marca por defecto como 'La Mejor'.
+                                        </p>
+                                    </div>
+                                    <a href="https://www.waze.com/es/live-map/directions?navigate=yes&to=ll.-35.66710117%2C-72.47788434&from=ll.-35.72960309%2C-72.53139977" target="_blank" class="w-full py-3 px-4 rounded-xl bg-black border border-gray-700 text-white font-bold text-xs sm:text-sm uppercase flex items-center justify-center gap-4 hover:border-blue-400 transition-all shadow-[0_0_15px_rgba(0,0,0,0.5)] group">
+                                        <img src="https://img.icons8.com/color/96/waze.png" alt="Waze" class="w-12 h-12 group-hover:scale-110 transition-transform drop-shadow-lg">
+                                        <span class="group-hover:text-blue-400 transition-colors">Abrir en Waze</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-[#0a0210]/60 border border-neon-purple/40 p-5 rounded-2xl text-left hover-glow-purple transition-all">
+                            <h3 class="text-white font-bold text-base uppercase mb-3 flex items-center gap-2 glow-text-purple"><i data-lucide="bus" class="w-5 h-5 text-neon-purple"></i> Llegar en Bus & Colectivos</h3>
+                            <ul class="space-y-4 text-xs text-gray-300 font-mono-code">
+                                <li class="border-b border-neon-purple/30 pb-3">
+                                    <strong class="text-neon-purple block text-sm mb-1 uppercase glow-text-purple">★ Única Ruta Directa: Desde Santiago</strong>
+                                    La empresa <strong>Pullman del Sur</strong> (Terminal Sur) es la única con recorrido directo a <strong>Chanco/Pelluhue</strong>. Salidas estimadas: 07:40, 09:35, 15:00 y 18:50 hrs. 
+                                </li>
+                                <li class="border-b border-neon-purple/30 pb-3 mt-3">
+                                    <strong class="text-neon-purple block text-sm mb-1 glow-text-purple">Desde Otros Destinos (Concepción, Talca, Chillán)</strong>
+                                    Si vienes desde el sur u otras ciudades (vía EME Bus, Interbus, JAC, etc.), los buses <strong>llegan SOLAMENTE hasta Cauquenes</strong>. Desde el terminal de Cauquenes debes tomar locomoción local hacia Chanco.
+                                </li>
+                                <li class="border-b border-neon-purple/30 pb-2 mt-3">
+                                    <strong class="text-neon-red block text-sm mb-1 glow-text-red">⚠️ LÍMITE CAUQUENES ➞ CHANCO / PELLUHUE</strong>
+                                    La <strong>última micro segura</strong> que sale desde el Terminal de Cauquenes hacia Chanco y Pelluhue es a las <strong>19:00 hrs</strong>. ¡Prográmate para no quedar a pie!
+                                </li>
+                                <li>
+                                    <strong class="text-neon-orange block text-sm mb-1 glow-text-orange">Colectivos Amarillos / Costeros</strong>
+                                    Servicios de transporte colectivo que conectan Pelluhue, Curanipe y Chanco de forma continua durante el día.
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-[#1f0a02]/60 border border-neon-orange/40 p-5 rounded-2xl text-left hover-glow-orange transition-all">
+                            <h3 class="text-white font-bold text-base uppercase mb-3 flex items-center gap-2 glow-text-orange"><i data-lucide="car-taxi-front" class="w-5 h-5 text-neon-orange"></i> Taxis Locales (Hacia la fiesta)</h3>
+                            <p class="text-xs text-gray-300 font-mono-code mb-4">
+                                Valor aproximado desde Chanco al terreno: <strong>$10.000</strong>. Te sugerimos consultar y acordar la tarifa previamente por WhatsApp.
+                            </p>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div class="p-3 rounded-xl bg-[#020a0a]/80 border border-neon-cyan/40 flex flex-col justify-between hover-glow-cyan transition-all">
+                                    <div>
+                                        <p class="text-sm font-bold text-white uppercase glow-text-cyan mb-1 flex items-center gap-1"><i data-lucide="circle-user" class="w-4 h-4 text-neon-cyan"></i> José Bernal</p>
+                                        <p class="text-[10px] text-gray-300 font-mono-code mb-3">Viajes dentro y fuera de la comuna</p>
+                                    </div>
+                                    <a href="https://wa.me/56976663170" target="_blank" class="w-full py-2 rounded-lg bg-black border border-neon-cyan text-neon-cyan text-[10px] font-bold uppercase flex items-center justify-center gap-2 hover:bg-neon-cyan hover:text-black transition-all">
+                                        <i data-lucide="message-circle" class="w-4 h-4"></i> Contactar
+                                    </a>
+                                </div>
+                                
+                                <div class="p-3 rounded-xl bg-[#051005]/80 border border-neon-green/40 flex flex-col justify-between hover-glow-green transition-all">
+                                    <div>
+                                        <p class="text-sm font-bold text-white uppercase glow-text-green mb-1 flex items-center gap-1"><i data-lucide="circle-user" class="w-4 h-4 text-neon-green"></i> Luis Opazo González</p>
+                                        <p class="text-[10px] text-gray-300 font-mono-code mb-3">Atención 24 hrs. Rápido, seguro, confiable.</p>
+                                    </div>
+                                    <a href="https://wa.me/56995134643" target="_blank" class="w-full py-2 rounded-lg bg-black border border-neon-green text-neon-green text-[10px] font-bold uppercase flex items-center justify-center gap-2 hover:bg-neon-green hover:text-black transition-all">
+                                        <i data-lucide="message-circle" class="w-4 h-4"></i> Contactar
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. DÓNDE DORMIR -->
+            <div id="seccion-dormir" class="w-full scroll-mt-24">
+                <button class="accordion-btn border-neon-magenta hover-glow-magenta shadow-[0_0_15px_rgba(255,0,127,0.3)]" onclick="toggleAccordion('content-dormir', 'icon-dormir')">
+                    <span class="flex items-center gap-3 glow-text-magenta"><i data-lucide="home" class="w-6 h-6"></i> Dónde Dormir</span>
+                    <i data-lucide="chevron-down" id="icon-dormir" class="w-6 h-6 text-neon-magenta transition-transform duration-300"></i>
+                </button>
+                <div id="content-dormir" class="accordion-content">
+                    <div class="bg-[#050104]/80 p-4 sm:p-6 rounded-b-3xl border border-t-0 border-neon-magenta/50 mt-1 backdrop-blur-md">
+                        
+                        <!-- 1. SELECCIÓN SUGERIDA -->
+                        <button onclick="toggleNested('nested-alojamientos', 'icon-nested')" class="w-full py-4 rounded-xl bg-black border-2 border-neon-orange text-neon-orange font-bold uppercase text-xs sm:text-sm hover:bg-neon-orange hover:text-black transition-all hover:shadow-[0_0_20px_#ff5e00] flex items-center justify-center gap-2 mb-6">
+                            <i data-lucide="list" class="w-5 h-5"></i> Selección Sugerida <i data-lucide="chevron-down" id="icon-nested" class="w-5 h-5 transition-transform duration-300"></i>
+                        </button>
+
+                        <div id="nested-alojamientos" class="hidden mb-10 transition-all">
+                            <div class="flex flex-wrap justify-center gap-1 sm:gap-2 mb-6" id="filter-buttons">
+                                <button class="filter-btn active px-3 sm:px-4 py-1.5 rounded-full border border-neon-cyan/50 text-neon-cyan/70 font-bold text-[10px] sm:text-xs font-mono-code uppercase hover:border-neon-cyan hover:text-neon-cyan transition-all" data-filter="all">Todas</button>
+                                <button class="filter-btn px-3 sm:px-4 py-1.5 rounded-full border border-neon-cyan/50 text-neon-cyan/70 font-bold text-[10px] sm:text-xs font-mono-code uppercase hover:border-neon-cyan hover:text-neon-cyan transition-all" data-filter="chanco">📍 Chanco</button>
+                                <button class="filter-btn px-3 sm:px-4 py-1.5 rounded-full border border-neon-cyan/50 text-neon-cyan/70 font-bold text-[10px] sm:text-xs font-mono-code uppercase hover:border-neon-cyan hover:text-neon-cyan transition-all" data-filter="pelluhue">📍 Pelluhue</button>
+                                <button class="filter-btn px-3 sm:px-4 py-1.5 rounded-full border border-neon-cyan/50 text-neon-cyan/70 font-bold text-[10px] sm:text-xs font-mono-code uppercase hover:border-neon-cyan hover:text-neon-cyan transition-all" data-filter="curanipe">📍 Curanipe</button>
+                                <button class="filter-btn px-3 sm:px-4 py-1.5 rounded-full border border-neon-cyan/50 text-neon-cyan/70 font-bold text-[10px] sm:text-xs font-mono-code uppercase hover:border-neon-cyan hover:text-neon-cyan transition-all" data-filter="economico">💰 Económico</button>
+                                <button class="filter-btn px-3 sm:px-4 py-1.5 rounded-full border border-neon-cyan/50 text-neon-cyan/70 font-bold text-[10px] sm:text-xs font-mono-code uppercase hover:border-neon-cyan hover:text-neon-cyan transition-all" data-filter="standard">🏡 Estándar</button>
+                                <button class="filter-btn px-3 sm:px-4 py-1.5 rounded-full border border-neon-cyan/50 text-neon-cyan/70 font-bold text-[10px] sm:text-xs font-mono-code uppercase hover:border-neon-cyan hover:text-neon-cyan transition-all" data-filter="premium">✨ Premium</button>
+                                <button class="filter-btn px-3 sm:px-4 py-1.5 rounded-full border border-neon-cyan/50 text-neon-cyan/70 font-bold text-[10px] sm:text-xs font-mono-code uppercase hover:border-neon-cyan hover:text-neon-cyan transition-all" data-filter="pareja">💑 Parejas</button>
+                                <button class="filter-btn px-3 sm:px-4 py-1.5 rounded-full border border-neon-cyan/50 text-neon-cyan/70 font-bold text-[10px] sm:text-xs font-mono-code uppercase hover:border-neon-cyan hover:text-neon-cyan transition-all" data-filter="familia">👨‍👩‍👧 Familias</button>
+                                <button class="filter-btn px-3 sm:px-4 py-1.5 rounded-full border border-neon-cyan/50 text-neon-cyan/70 font-bold text-[10px] sm:text-xs font-mono-code uppercase hover:border-neon-cyan hover:text-neon-cyan transition-all" data-filter="grupo">👥 Grupos</button>
+                            </div>
+                            
+                            <div id="grid-alojamientos" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left w-full pb-4"></div>
+                        </div>
+
+                        <!-- 2. BÚSQUEDA LIBRE Y CAMPING (ABAJO) -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-[#020a0a]/60 border border-neon-cyan/40 p-5 rounded-2xl text-center hover-glow-cyan transition-all duration-300 flex flex-col justify-center">
+                                <h3 class="text-white font-bold mb-4 uppercase text-xs sm:text-sm font-mono-code glow-text-cyan">Búsqueda libre en las plataformas</h3>
+                                
+                                <div class="flex gap-3 h-full justify-center">
+                                    <a href="https://www.airbnb.cl/s/Pelluhue--Maule--Chile/homes" target="_blank" class="flex-1 py-4 rounded-2xl bg-black border border-gray-700 text-white font-bold text-[10px] sm:text-xs uppercase flex flex-col items-center justify-center gap-2 hover:border-[#FF5A5F] transition-all group shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+                                        <img src="https://img.icons8.com/color/96/airbnb.png" alt="Airbnb" class="w-12 h-12 sm:w-14 sm:h-14 group-hover:scale-110 transition-transform drop-shadow-lg">
+                                        <span class="group-hover:text-[#FF5A5F] transition-colors">Airbnb</span>
+                                    </a>
+                                    <a href="https://www.booking.com/searchresults.es.html?ss=Pelluhue%2C+Maule%2C+Chile" target="_blank" class="flex-1 py-4 rounded-2xl bg-black border border-gray-700 text-white font-bold text-[10px] sm:text-xs uppercase flex flex-col items-center justify-center gap-2 hover:border-[#00aaff] transition-all group shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+                                        <img src="https://img.icons8.com/color/96/booking.png" alt="Booking" class="w-12 h-12 sm:w-14 sm:h-14 group-hover:scale-110 transition-transform drop-shadow-lg">
+                                        <span class="group-hover:text-[#00aaff] transition-colors">Booking</span>
+                                    </a>
+                                    <a href="https://www.google.com/maps/search/cabañas+hospedaje+chanco+pelluhue" target="_blank" class="flex-1 py-4 rounded-2xl bg-black border border-gray-700 text-white font-bold text-[10px] sm:text-xs uppercase flex flex-col items-center justify-center gap-2 hover:border-neon-cyan transition-all group shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+                                        <img src="https://img.icons8.com/color/96/google-maps-new.png" alt="Maps" class="w-12 h-12 sm:w-14 sm:h-14 group-hover:scale-110 transition-transform drop-shadow-lg">
+                                        <span class="group-hover:text-neon-cyan transition-colors">Maps</span>
+                                    </a>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-[#051005]/60 border border-neon-green/40 p-5 rounded-2xl text-left relative overflow-hidden hover-glow-green transition-all">
+                                <i data-lucide="tent" class="w-20 h-20 absolute -right-2 -bottom-2 text-neon-green/10"></i>
+                                <h3 class="text-neon-green font-bold mb-2 uppercase text-sm flex items-center gap-2 glow-text-green"><i data-lucide="tent" class="w-4 h-4"></i> Opción Libre: Camping</h3>
+                                <p class="text-[10px] sm:text-xs text-gray-300 font-mono-code relative z-10 mb-4">Tendremos área habilitada para armar carpa. Para vivir la experiencia completa y no tener que manejar de madrugada, ¡trae tu equipo y quédate hasta la hora que quieras con nosotros!</p>
+                                
+                                <div class="bg-black/50 p-3 rounded-xl border border-neon-green/40 text-center relative z-10">
+                                    <p class="text-xs font-bold text-white uppercase mb-2">¿Te quedas a acampar?</p>
+                                    <div class="flex gap-2">
+                                        <button onclick="setCamping('Sí', this)" class="btn-radio-camping flex-1 py-2 rounded-lg border border-neon-green/50 text-neon-green text-xs font-bold uppercase hover:bg-neon-green hover:text-black transition-all">Sí, acampo</button>
+                                        <button onclick="setCamping('No', this)" class="btn-radio-camping flex-1 py-2 rounded-lg border border-neon-red/50 text-neon-red text-xs font-bold uppercase hover:bg-neon-red hover:text-black transition-all">No, paso</button>
+                                    </div>
+                                    <button id="btn-enviar-camping" onclick="enviarRSVPCamping()" class="w-full mt-3 hidden py-2 rounded-lg bg-neon-green text-black font-extrabold text-xs uppercase hover:scale-[1.02] transition-all shadow-[0_0_15px_#39ff14]">
+                                        Guardar Respuesta <span class="loader hidden ml-2 border-t-black" id="loader-camping"></span>
+                                    </button>
+                                    <p id="msg-exito-camping" class="hidden mt-2 text-neon-green text-xs font-bold uppercase glow-text-green"><i data-lucide="check" class="inline w-4 h-4"></i> Respuesta Actualizada</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. EL MEJOR REGALO -->
+            <div id="seccion-regalo" class="w-full scroll-mt-24">
+                <button class="accordion-btn border-neon-purple hover-glow-purple shadow-[0_0_15px_rgba(176,38,255,0.3)]" onclick="toggleAccordion('content-regalo', 'icon-regalo')">
+                    <span class="flex items-center gap-3 glow-text-purple"><i data-lucide="gift" class="w-6 h-6"></i> El Mejor Regalo</span>
+                    <i data-lucide="chevron-down" id="icon-regalo" class="w-6 h-6 text-neon-purple transition-transform duration-300"></i>
+                </button>
+                <div id="content-regalo" class="accordion-content">
+                    <div class="bg-[#050104]/80 p-6 rounded-b-3xl border border-t-0 border-neon-purple/50 mt-1 flex flex-col md:flex-row gap-6 backdrop-blur-md">
+                        <div class="text-left md:w-1/2">
+                            <p class="text-xs sm:text-sm text-gray-200 leading-relaxed font-mono-code">
+                                Sabemos que el solo hecho de viajar para acompañarnos ya implica un tremendo esfuerzo. Ese es, de corazón, el regalo más grande que podemos recibir. Omitimos la lista de novios y no esperamos obsequios físicos. <br><br>
+                                Si de todas formas les nace tener un detalle con nosotros, habilitamos esta cuenta para recibir aportes voluntarios, que agradeceremos enormemente.
+                            </p>
+                        </div>
+                        
+                        <div class="md:w-1/2">
+                            <button onclick="copiarDatosBancarios()" class="w-full h-full bg-[#0a0210]/80 p-5 rounded-2xl border border-neon-purple/50 text-center font-mono-code relative overflow-hidden group hover-glow-purple transition-all">
+                                <div class="absolute inset-0 bg-neon-purple/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                                    <span class="text-black font-extrabold text-sm uppercase tracking-widest flex items-center gap-2"><i data-lucide="copy" class="w-5 h-5"></i> Copiar Datos</span>
+                                </div>
+                                <div id="bankDetailsContent" class="relative z-0 transition-opacity duration-300">
+                                    <i data-lucide="gift" class="w-8 h-8 text-neon-purple mx-auto mb-2 animate-pulse glow-text-purple"></i>
+                                    <p class="text-[10px] text-neon-purple/70 uppercase tracking-widest mb-2 border-b border-neon-purple/30 pb-2">Datos de Transferencia</p>
+                                    <p class="text-sm text-white font-bold">Ernesto Guajardo Muñoz</p>
+                                    <p class="text-xs text-gray-300 mt-1">Banco Estado - Cta RUT</p>
+                                    <p class="text-sm text-neon-purple font-bold mt-1 glow-text-purple">N° 16517758</p>
+                                    <p class="text-xs text-gray-300 mt-1">RUT 16517758-4</p>
+                                </div>
+                                <div id="copySuccessMsg" class="absolute inset-0 bg-neon-green flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 z-20">
+                                    <span class="text-black font-extrabold text-sm uppercase tracking-widest flex items-center gap-2"><i data-lucide="check-circle" class="w-5 h-5"></i> ¡Copiados!</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div> <!-- Fin Acordeones -->
+
+        <section class="w-full mt-10 relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto w-full">
+                <div class="bg-[#020a0a]/60 border border-neon-cyan/50 p-5 rounded-2xl flex flex-col justify-center text-center hover-glow-cyan transition-all">
+                    <h2 class="text-sm sm:text-base font-bold text-white mb-2 uppercase flex items-center justify-center gap-2 glow-text-cyan">
+                        <i data-lucide="message-circle" class="w-5 h-5 text-neon-cyan"></i> ¿Tienes Dudas?
+                    </h2>
+                    <a href="https://wa.me/56993240064?text=Hola!%20Tengo%20una%20duda%20con%20la%20info%20del%20matri..." target="_blank" class="mt-2 mx-auto w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-neon-cyan text-black font-extrabold text-xs uppercase tracking-wider hover:opacity-90 shadow-[0_0_10px_#00f3ff]">
+                        Enviar WhatsApp
+                    </a>
+                </div>
+
+                <div class="bg-[#1f0a02]/60 border border-neon-orange/50 p-5 rounded-2xl flex flex-col justify-center text-center hover-glow-orange transition-all">
+                    <h2 class="text-sm sm:text-base font-bold text-white mb-2 uppercase flex items-center justify-center gap-2 glow-text-orange">
+                        <i data-lucide="calendar-clock" class="w-5 h-5 text-neon-orange"></i> Tu Asistencia General
+                    </h2>
+                    <a href="index.html" id="btn-volver-index" class="mt-2 mx-auto w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border-2 border-neon-orange text-neon-orange font-extrabold text-xs uppercase tracking-wider hover:bg-neon-orange hover:text-black hover:shadow-[0_0_10px_#ff5e00] transition-all">
+                        Volver a la Invitación
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <footer class="w-full text-center pb-8 pt-10 relative z-10">
+            <h4 class="text-lg sm:text-xl font-display font-bold uppercase tracking-wider text-white">
+                <span class="glow-text-orange hover-name-catalina inline-block cursor-default">CATALINA</span> 
+                <span class="text-neon-cyan px-1 hover-name-ampersand cursor-default">&</span> 
+                <span class="glow-text-green hover-name-ernesto inline-block cursor-default">ERNESTO</span>
+            </h4>
+            <p class="text-[9px] sm:text-[10px] font-mono-code text-orange-400/60 uppercase tracking-widest mt-2">16 · 01 · 2027 — CHANCO, CHILE</p>
+        </footer>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        const SHEETDB_URL = "https://sheetdb.io/api/v1/hkv8diej2nrg7?sheet=Asistencia_Fiesta_y_Camping"; 
+        
+        let urlParams = new URLSearchParams(window.location.search);
+        let guestId = urlParams.get('id') || '';
+        let guestNameRaw = urlParams.get('n') || '';
+        let guestName = '';
+        try { guestName = decodeURIComponent(escape(guestNameRaw)); } catch(e) { guestName = decodeURIComponent(guestNameRaw); }
+        let hijosData = urlParams.get('hijos') || ''; 
+
+        let fiestaRespuestas = {}; 
+        let campingRespuesta = "";
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if(guestName) { 
+                let isPlural = / y | & | e |,/i.test(guestName);
+                document.getElementById('mensaje-bienvenida').innerHTML = `¡Hola <span class="glow-text-cyan">${guestName}</span>!`; 
+                let introText = isPlural ?
+                    `Los invitamos a sumergirse en la experiencia de nuestra celebración el próximo <strong class="glow-text-cyan font-bold text-neon-cyan">sábado 16 de enero de 2027</strong>. Sabemos que llegar hasta este rincón del Maule es un viaje y valoramos profundamente el esfuerzo, la energía y las ganas de acompañarnos.<br><br>Este terreno guarda mucha historia familiar, y abrirlo para ustedes es nuestra forma de invitarlos a desconectarse de la rutina para compartir, disfrutar y vivir este gran día de la manera más relajada y cercana posible.` :
+                    `Te invitamos a sumergirte en la experiencia de nuestra celebración el próximo <strong class="glow-text-cyan font-bold text-neon-cyan">sábado 16 de enero de 2027</strong>. Sabemos que llegar hasta este rincón del Maule es un viaje y valoramos profundamente el esfuerzo, la energía y las ganas de acompañarnos.<br><br>Este terreno guarda mucha historia familiar, y abrirlo para ti es nuestra forma de invitarte a desconectarte de la rutina para compartir, disfrutar y vivir este gran día de la manera más relajada y cercana posible.`;
+                document.getElementById('intro-text').innerHTML = introText;
+                
+                checkExistingInfoResponse(guestName);
+            }
+            
+            const btnVolver = document.getElementById('btn-volver-index');
+            if(btnVolver) {
+                let returnUrl = 'index.html';
+                if (guestId || guestNameRaw || hijosData) { returnUrl += `?id=${encodeURIComponent(guestId)}&n=${encodeURIComponent(guestNameRaw)}&hijos=${encodeURIComponent(hijosData)}`; }
+                btnVolver.href = returnUrl;
+            }
+
+            if (hijosData && hijosData.trim() !== "") {
+                const hijosArray = hijosData.split(',').map(h => h.trim()).filter(h => h);
+                if (hijosArray.length > 0) {
+                    document.getElementById('modulo-fiesta-cabros').classList.remove('hidden');
+                    const nombresJuntos = hijosArray.join(' y ');
+                    document.getElementById('texto-nombres-cabros').innerHTML = `¡Tenemos una invitación especial! Nos encantaría que <strong class="text-white glow-text-cyan">${nombresJuntos}</strong> se sumen a la fiesta a partir de las 21:00 hrs para darlo todo en la pista.`;
+                    let htmlBotones = '';
+                    hijosArray.forEach((hijo, index) => {
+                        fiestaRespuestas[`hijo${index+1}`] = null;
+                        htmlBotones += `
+                        <div class="bg-black/60 p-3 rounded-xl border border-neon-purple/30 text-left">
+                            <span class="text-white font-bold text-sm uppercase block mb-2">${hijo}</span>
+                            <div class="flex gap-2">
+                                <button onclick="setFiestaRSVP('${hijo}', 'hijo${index+1}', 'Sí', this)" class="btn-radio-rsvp flex-1 py-1.5 rounded-lg border border-neon-green/50 text-neon-green text-[10px] font-bold uppercase hover:bg-neon-green hover:text-black transition-all">Sí, asiste</button>
+                                <button onclick="setFiestaRSVP('${hijo}', 'hijo${index+1}', 'No', this)" class="btn-radio-rsvp flex-1 py-1.5 rounded-lg border border-neon-red/50 text-neon-red text-[10px] font-bold uppercase hover:bg-neon-red hover:text-white transition-all">No asiste</button>
+                            </div>
+                        </div>`;
+                    });
+                    document.getElementById('lista-cabros-rsvp').innerHTML = htmlBotones;
+                }
+            }
+        });
+
+        async function checkExistingInfoResponse(gName) {
+            try {
+                const searchUrl = `https://sheetdb.io/api/v1/hkv8diej2nrg7/search?Nombre=${encodeURIComponent(gName)}&sheet=Asistencia_Fiesta_y_Camping`;
+                const response = await fetch(searchUrl, { headers: { 'Accept': 'application/json', 'Content-Type': 'application/json; charset=utf-8' } });
+                const data = await response.json();
+                
+                if (data && data.length > 0) {
+                    const lastRecord = data[data.length - 1];
+                    
+                    if (hijosData && hijosData.trim() !== "") {
+                        const hijosArray = hijosData.split(',').map(h => h.trim()).filter(h => h);
+                        hijosArray.forEach((hijo, index) => {
+                            const val = lastRecord[`Hijo_${index+1}`];
+                            if (val === 'Sí' || val === 'No') {
+                                const kidDiv = document.getElementById('lista-cabros-rsvp').children[index];
+                                if (kidDiv) {
+                                    const btns = kidDiv.querySelectorAll('.btn-radio-rsvp');
+                                    btns.forEach(b => {
+                                        if ((val === 'Sí' && b.textContent.includes('Sí')) || (val === 'No' && b.textContent.includes('No'))) {
+                                            setFiestaRSVP(hijo, `hijo${index+1}`, val, b);
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                        const btnFiesta = document.getElementById('btn-enviar-fiesta');
+                        if (btnFiesta && !btnFiesta.classList.contains('hidden')) {
+                            btnFiesta.innerHTML = `Actualizar Pase <span class="loader hidden ml-2" id="loader-fiesta"></span>`;
+                        }
+                    }
+
+                    if (lastRecord.Camping === 'Sí' || lastRecord.Camping === 'No') {
+                        const btns = document.querySelectorAll('.btn-radio-camping');
+                        btns.forEach(b => {
+                            if ((lastRecord.Camping === 'Sí' && b.textContent.includes('Sí')) || (lastRecord.Camping === 'No' && b.textContent.includes('No'))) {
+                                setCamping(lastRecord.Camping, b);
+                            }
+                        });
+                        const btnCamping = document.getElementById('btn-enviar-camping');
+                        if (btnCamping) {
+                            btnCamping.innerHTML = `Actualizar Respuesta <span class="loader hidden ml-2 border-t-black" id="loader-camping"></span>`;
+                        }
+                    }
+                }
+            } catch (err) { console.error("Error leyendo memoria de Info:", err); }
+        }
+
+        function setFiestaRSVP(nombreHijo, keyHijo, valor, btnElement) {
+            fiestaRespuestas[keyHijo] = valor;
+            const parent = btnElement.parentElement;
+            parent.querySelectorAll('.btn-radio-rsvp').forEach(b => { b.classList.remove('bg-neon-green', 'text-black', 'shadow-[0_0_10px_#39ff14]', 'bg-neon-red', 'text-white', 'shadow-[0_0_10px_#ff003c]'); });
+            if (valor === 'Sí') btnElement.classList.add('bg-neon-green', 'text-black', 'shadow-[0_0_10px_#39ff14]');
+            if (valor === 'No') btnElement.classList.add('bg-neon-red', 'text-white', 'shadow-[0_0_10px_#ff003c]');
+            const respondidos = Object.values(fiestaRespuestas).filter(v => v !== null).length;
+            if (respondidos === Object.keys(fiestaRespuestas).length) { document.getElementById('btn-enviar-fiesta').classList.remove('hidden'); }
+        }
+
+        function setCamping(valor, btnElement) {
+            campingRespuesta = valor;
+            const parent = btnElement.parentElement;
+            parent.querySelectorAll('.btn-radio-camping').forEach(b => { b.classList.remove('bg-neon-green', 'text-black', 'shadow-[0_0_10px_#39ff14]', 'bg-neon-red', 'text-white', 'shadow-[0_0_10px_#ff003c]'); });
+            if (valor === 'Sí') btnElement.classList.add('bg-neon-green', 'text-black', 'shadow-[0_0_10px_#39ff14]');
+            if (valor === 'No') btnElement.classList.add('bg-neon-red', 'text-white', 'shadow-[0_0_10px_#ff003c]');
+            document.getElementById('btn-enviar-camping').classList.remove('hidden');
+        }
+
+        function enviarRSVPFiesta() {
+            const btn = document.getElementById('btn-enviar-fiesta'); const loader = document.getElementById('loader-fiesta');
+            btn.disabled = true; loader.classList.remove('hidden');
+            const payload = { data: [{ "ID_Invitado": guestId, "Nombre": guestName, "Hijo_1": fiestaRespuestas['hijo1'] || '', "Hijo_2": fiestaRespuestas['hijo2'] || '', "Hijo_3": fiestaRespuestas['hijo3'] || '', "Camping": "" }] };
+            fetch(SHEETDB_URL, { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json; charset=utf-8' }, body: JSON.stringify(payload) })
+            .then(() => { btn.classList.add('hidden'); document.getElementById('msg-exito-fiesta').classList.remove('hidden'); })
+            .catch(e => { alert("Error de conexión."); btn.disabled = false; loader.classList.add('hidden'); });
+        }
+
+        function enviarRSVPCamping() {
+            const btn = document.getElementById('btn-enviar-camping'); const loader = document.getElementById('loader-camping');
+            btn.disabled = true; loader.classList.remove('hidden');
+            const payload = { data: [{ "ID_Invitado": guestId, "Nombre": guestName, "Hijo_1": "", "Hijo_2": "", "Hijo_3": "", "Camping": campingRespuesta }] };
+            fetch(SHEETDB_URL, { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json; charset=utf-8' }, body: JSON.stringify(payload) })
+            .then(() => { btn.classList.add('hidden'); document.getElementById('msg-exito-camping').classList.remove('hidden'); })
+            .catch(e => { alert("Error de conexión."); btn.disabled = false; loader.classList.add('hidden'); });
+        }
+
+        function toggleAccordion(contentId, iconId) {
+            const content = document.getElementById(contentId); const icon = document.getElementById(iconId);
+            if (content.classList.contains('open')) { content.style.maxHeight = content.scrollHeight + "px"; void content.offsetWidth; content.style.maxHeight = null; content.classList.remove('open'); icon.style.transform = 'rotate(0deg)'; } 
+            else { content.classList.add('open'); content.style.maxHeight = (content.scrollHeight + 3000) + "px"; icon.style.transform = 'rotate(180deg)'; setTimeout(() => { if(content.classList.contains('open')) content.style.maxHeight = "none"; }, 500); }
+        }
+
+        function toggleNested(contentId, iconId) {
+            const content = document.getElementById(contentId); const icon = document.getElementById(iconId);
+            if (content.classList.contains('hidden')) { content.classList.remove('hidden'); icon.style.transform = 'rotate(180deg)'; } 
+            else { content.classList.add('hidden'); icon.style.transform = 'rotate(0deg)'; }
+        }
+
+        function copiarDatosBancarios() {
+            const texto = "Nombre: Ernesto Guajardo Muñoz\nBanco: Banco Estado\nTipo de Cuenta: Cuenta RUT\nN° Cuenta: 16517758\nRUT: 16517758-4";
+            navigator.clipboard.writeText(texto).then(() => {
+                const s = document.getElementById('copySuccessMsg'); s.classList.remove('opacity-0'); s.classList.add('opacity-100');
+                setTimeout(() => { s.classList.remove('opacity-100'); s.classList.add('opacity-0'); }, 2500);
+            });
+        }
+
+        // --- LA GRAN BASE DE DATOS DE ALOJAMIENTOS (LOS 68) ---
+        const stays = [
+            {"name":"Hospedaje Costa Verde","zone":"chanco","area":"Abdón Fuentealba 592, Chanco, Maule","level":"economico","types":["habitacion","pareja"],"price":"Desde $15.000","phone":"+56 9 8274 1219","status":"verified","source":"Turismo Chanco 06/10/2025 (guía oficial)","travel":"≈ 15–20 min","whatsappPhones":["+56 9 8274 1219"],"phoneVerification":"Confirmado por contacto previo","mapQuery":"Abdón Fuentealba 592, Chanco, Maule, Chile"},
+            {"name":"Departamento Interior Lucía Vega","zone":"chanco","area":"Av. Errázuriz 268, Chanco, Maule","level":"standard","types":["familia","grupo"],"price":"$45.000 por noche","priceNote":"2 dormitorios: 1 cama de 2 plazas; 1 cama de 1½ plaza; 1 sofá cama.","desc":"Departamento interior en sector céntrico de Chanco.","status":"confirm","travel":"≈ 15–20 min","mapQuery":"Av. Errázuriz 268, Chanco, Maule, Chile"},
+            {"name":"Cabañas Los Aromos","zone":"chanco","area":"Victoria s/n, Chanco","level":"standard","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 9079 0528","status":"confirm","travel":"≈ 15–20 min","phoneVerification":"NO VERIFICADO"},
+            {"name":"Cabañas La Pradera","zone":"chanco","area":"Pedro de Valdivia con Federico Albert, frente a la quesería, Chanco","level":"standard","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 8242 9981","phone2":"+56 9 8255 8462","status":"confirm","travel":"≈ 15–20 min","whatsappPhones":["+56 9 8255 8462"],"phoneVerification":"Confirmado por contacto previo","phone2Verification":"NO VERIFICADO","mapQuery":"Pedro de Valdivia con Federico Albert, frente a la quesería, Chanco, Maule, Chile"},
+            {"name":"Cabaña Chabelita","zone":"chanco","area":"Dirección exacta NO VERIFICADA","level":"standard","types":["familia"],"price":"$40.000","priceNote":"Hasta 6 personas. Cuenta con quincho.","desc":"Cabaña para 6 personas con quincho.","status":"verified","phone":"+56 9 7624 8626","travel":"≈ 15–20 min","phoneVerification":"Confirmado por contacto previo","locationVerification":"NO VERIFICADO"},
+            {"name":"Cabañas Los Quillayes","zone":"chanco","area":"Ruta M-50, salida norte de Chanco, km 5, Chanco, Maule","level":"standard","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 9490 6351","phone2":"+56 9 5608 5759","status":"confirm","travel":"≈ 15–20 min","whatsappPhones":["+56 9 5608 5759"],"phoneVerification":"NO VERIFICADO","phone2Verification":"Confirmado por contacto previo","mapQuery":"Ruta M50 salida norte de Chanco km 5, Chanco, Maule, Chile"},
+            {"name":"Hostal Mohor","zone":"chanco","area":"Abdón Fuentealba 135, Chanco","level":"economico","types":["habitacion","pareja"],"price":"Desde $29.000","priceNote":"1 persona: $29.000 baño compartido / $39.000 baño privado. 2 personas: $59.000 baño privado. Solo alojamiento.","phone":"+56 9 9970 0314","status":"verified","travel":"≈ 15–20 min","whatsappPhones":["+56 9 9970 0314"],"phoneVerification":"Confirmado por contacto previo"},
+            {"name":"Residencial Anastasia","zone":"chanco","area":"Manuel Rodríguez 286, Chanco, Maule","level":"economico","types":["habitacion","pareja"],"price":"Desde $15.000","phone":"+56 9 9444 4082","phone2":"+56 9 8816 8654","status":"confirm","travel":"≈ 15–20 min","phoneVerification":"NO VERIFICADO","phone2Verification":"NO VERIFICADO","mapQuery":"Manuel Rodríguez 286, Chanco, Maule, Chile"},
+            {"name":"Fundo San Bonifacio","zone":"chanco","area":"Coordenadas: -35.741765, -72.522552","level":"premium","types":["pareja","familia","grupo"],"price":"$129.000 + IVA","priceNote":"3 habitaciones matrimoniales en suite estándar: $129.000 + IVA. 2 habitaciones matrimoniales en suite premium / de luxe: $150.000 IVA incluido para 2–3 huéspedes. 1 habitación doble. Incluye desayuno, piscina, tinas calientes, instalaciones y servicio de mucama mañana y tarde.","desc":"Hotel familiar y exclusivo, con 6 habitaciones en total. Atención personalizada. Orientado principalmente a grupos familiares o de amigos.","phone":"+56 9 9563 0303","phone2":"+56 9 9240 3090","booking":"https://www.booking.com/hotel/cl/fundo-san-bonifacio.es-ar.html","web":"https://www.fundosanbonifacio.cl/","status":"verified","travel":"≈ 15–20 min","whatsappPhones":["+56 9 9240 3090"],"phoneVerification":"NO VERIFICADO","phone2Verification":"Confirmado por contacto previo","mapQuery":"-35.74176511209991,-72.52255202243606"},
+            {"name":"Hospedaje El Yugo","zone":"chanco","area":"Ramón Freire 292, Chanco, Maule","level":"economico","types":["habitacion","pareja"],"price":"$20.000 por persona","priceNote":"Habitaciones con 2 camas; $20.000 por persona.","phone":"+56 9 8761 2185","status":"verified","travel":"≈ 15–20 min","whatsappPhones":["+56 9 8761 2185"],"phoneVerification":"Confirmado por contacto previo","mapQuery":"Ramón Freire 292, Chanco, Maule, Chile"},
+            {"name":"Hospedaje Las Rocas","zone":"chanco","area":"M-446, Loanco, Chanco, Maule","level":"economico","types":["habitacion","pareja","familia"],"price":"Desde $35.000","phone":"+56 9 8495 2060","phone2":"+56 73 197 1058","status":"confirm","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","phone2Verification":"Fijo; no WhatsApp","mapQuery":"M-446, Loanco, Chanco, Maule, Chile"},
+            {"name":"Cabañas Bora Bora","zone":"chanco","area":"Caleta Loanco","level":"standard","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 7968 2923","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO"},
+            {"name":"Cabañas Mirador Santos del Mar","zone":"chanco","area":"Coordenadas aproximadas: -35.58377, -72.62161","level":"standard","types":["pareja","familia"],"price":"Consultar","priceNote":"Aún no hay tarifario de verano.","phone":"+56 9 5694 0021","status":"verified","travel":"≈ 25–30 min","phoneVerification":"Confirmado por contacto previo","mapQuery":"-35.58377,-72.62161"},
+            {"name":"Cabañas Lomas del Cacique","zone":"chanco","area":"Caleta Loanco","level":"standard","types":["pareja","familia","grupo"],"price":"Consultar","phone":"+56 9 3375 4028","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 3375 4028"],"phoneVerification":"Confirmado por contacto previo"},
+            {"name":"Cabañas Luz del Faro","zone":"chanco","area":"Faro Cabo Carranza, Constitución — NO VERIFICADO","level":"standard","types":["pareja","familia"],"price":"Consultar","phone":"+56 9 8226 6166","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
+            {"name":"Cabañas JS","zone":"chanco","area":"Ubicación NO VERIFICADA","level":"standard","types":["familia","grupo"],"price":"Desde $40.000","priceNote":"Capacidad para 4, 5 y 8 personas; valores informados de $40.000 a $60.000.","desc":"Tengo para 4, 5 y 8 personas.","phone":"+56 9 8202 6355","status":"verified","travel":"≈ 15–20 min","whatsappPhones":["+56 9 8202 6355"],"phoneVerification":"Confirmado por contacto previo","locationVerification":"NO VERIFICADO"},
+            {"name":"Cabañas Don Willy","zone":"chanco","area":"Ubicación NO VERIFICADA","level":"standard","types":["familia","grupo"],"price":"$40.000","priceNote":"Para 5 personas por noche. Tinaja $30.000 por día, uso ilimitado.","desc":"Cabaña para 5 personas con tinaja opcional.","phone":"+56 9 7670 8488","status":"verified","travel":"≈ 20–25 min","whatsappPhones":["+56 9 7670 8488"],"phoneVerification":"Confirmado por contacto previo","locationVerification":"NO VERIFICADO"},
+            {"name":"Cabañas Altos de Polhuín","zone":"chanco","area":"Ubicación NO VERIFICADA","level":"standard","types":["pareja","familia","grupo"],"price":"Consultar","phone":"+56 9 5698 2336","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
+            {"name":"Refugio Costero — Reloca Alto","zone":"chanco","area":"Ubicación NO VERIFICADA","level":"standard","types":["pareja","familia"],"price":"Consultar","phone":"+56 9 4255 8721","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
+            {"name":"Cabañas Mar & Ser","zone":"chanco","area":"Ubicación NO VERIFICADA","level":"standard","types":["pareja","familia"],"price":"$50.000","priceNote":"Para 6 personas. 3 cabañas. Tinaja $35.000 por día.","desc":"3 cabañas; capacidad para 6 personas; tinaja con costo adicional.","phone":"+56 9 8268 7435","status":"verified","travel":"≈ 20–25 min","whatsappPhones":["+56 9 8268 7435"],"phoneVerification":"Confirmado por contacto previo","locationVerification":"NO VERIFICADO"},
+            {"name":"Cabañas Casas Negras","zone":"chanco","area":"Ubicación NO VERIFICADA","level":"standard","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 5102 0274","status":"verified","travel":"≈ 20–25 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
+            {"name":"Glamping Weliwen","zone":"chanco","area":"Chanco","level":"premium","types":["pareja"],"price":"$70.000–$90.000","priceNote":"Valores vistos para pareja; confirmar tarifa exacta según fecha/temporada.","phone":"+56 9 9307 5139","status":"verified","travel":"≈ 15–20 min","whatsappPhones":["+56 9 9307 5139"],"phoneVerification":"Confirmado por contacto previo"},
+            {"name":"Camping y Cabañas Lupita","zone":"chanco","area":"Ubicación NO VERIFICADA","level":"economico","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 9415 7611","status":"confirm","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
+            {"name":"A Hotel Boutique Pelluhue","zone":"pelluhue","area":"Condell #951, Pelluhue","level":"premiumplus","types":["pareja","habitacion"],"price":"$154.900","priceNote":"Por día para 2 personas, impuestos incluidos. Incluye desayuno americano, habitación en suite, calefacción, cama con scaldassono, TV cable, WiFi, estacionamiento y 1 hora de hot tub diario.","desc":"Primera línea frente al mar, vista panorámica y hotel boutique temático.","phone":"+56 9 7798 3319","fb":"https://web.facebook.com/AHOTELBOUTIQUEPELLUHUE","ig":"https://www.instagram.com/a_hotel_boutique_pelluhue/","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 7798 3319"],"phoneVerification":"Confirmado por contacto previo"},
+            {"name":"Hotel Puerto Madera","zone":"pelluhue","area":"Abdón Fuentealba #68, Pelluhue","level":"premium","types":["pareja","habitacion","familia"],"price":"Consultar","phone":"+56 9 8418 4490","web":"https://hostalpuertomadera.cl/portal/es-es/2470/inicio","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 8418 4490"],"phoneVerification":"Confirmado por contacto previo"},
+            {"name":"Hacienda Ecuestre","zone":"pelluhue","area":"Pelluhue","level":"premiumplus","types":["pareja","familia"],"price":"Consultar","phone":"+56 9 3910 3846","fb":"https://www.facebook.com/haciendaecuestre.haciendaecuestre","ig":"https://www.instagram.com/haciendaecuestrepelluhue","web":"https://haciendaecuestre.cl","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 3910 3846"],"phoneVerification":"Confirmado por contacto previo"},
+            {"name":"Cabañas Amaya","zone":"pelluhue","area":"Los Pinos #75, Pelluhue","level":"standard","types":["pareja","familia","grupo"],"price":"Consultar","phone":"+56 9 4001 1851","fb":"https://www.facebook.com/cabanasaamaya/","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 4001 1851"],"phoneVerification":"Confirmado por contacto previo"},
+            {"name":"Cabañas Rahue (Alto Rahue)","zone":"pelluhue","area":"Los Claveles #78, Mariscadero","level":"standard","types":["pareja","familia"],"price":"$75.000","priceNote":"Queda una sola cabaña para 6 personas. Los dos teléfonos corresponden al alojamiento.","desc":"Cabañas Rahue y Alto Rahue corresponden al mismo alojamiento.","phone":"+56 9 8215 0954","phone2":"+56 9 9486 5265","fb":"https://www.facebook.com/people/Caba%C3%B1as-Rahue/100069831701494/?sk=about","ig":"https://www.instagram.com/cabanasrahue/","web":"https://www.cabanasrahue.cl","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 8215 0954","+56 9 9486 5265"],"phoneVerification":"Confirmado por contacto previo","phone2Verification":"NO VERIFICADO"},
+            {"name":"Cabañas La Tatao","zone":"pelluhue","area":"Abdón Fuentealba #6, Pelluhue","level":"standard","types":["familia","grupo"],"price":"Desde $50.000","priceNote":"4 personas $50.000; 6 personas $60.000.","phone":"+56 9 9047 7493","fb":"https://www.facebook.com/cabanaslatatao","ig":"https://www.instagram.com/cabanaslatatao/","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 9047 7493"],"phoneVerification":"Confirmado por contacto previo"},
+            {"name":"Cabañas El Quincho","zone":"pelluhue","area":"Coordenadas: -35.804056, -72.549132","level":"standard","types":["familia","grupo"],"price":"Desde $50.000","priceNote":"4 pers $50.000 (1 hab); 6 pers $80.000 (3 hab); 10 pers $130.000. Piscina.","phone":"+56 9 8837 7184","fb":"https://www.facebook.com/elquincho.espaciocolibri/","ig":"https://www.instagram.com/elquincho.espaciocolibri/","web":"https://www.elquinchopelluhue.cl","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 8837 7184"],"phoneVerification":"Confirmado por contacto previo","locationVerification":"NO VERIFICADO","mapQuery":"-35.8040560733448,-72.54913282553365"},
+            {"name":"Cabañas Villa Verde","zone":"pelluhue","area":"Arturo Prat #330, Pelluhue","level":"standard","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 8880 2544","fb":"https://www.facebook.com/villaverdepelluhue/","ig":"https://www.instagram.com/villaverdepelluhue/","web":"https://villaverdepelluhue.cl/","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 8880 2544"],"phoneVerification":"Confirmado por contacto previo"},
+            {"name":"Cabañas Soledad Renovada","zone":"pelluhue","area":"Los Pinos s/n, Mariscadero","level":"standard","types":["pareja","familia"],"price":"$50.000","priceNote":"Confirmar capacidad y condiciones para la fecha.","phone":"+56 9 8884 1407","fb":"https://m.facebook.com/people/Caba%C3%B1as-Soledad-Renovada/100069235256705/","web":"https://www.soledadrenovada.cl/","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 8884 1407"],"phoneVerification":"Confirmado por contacto previo"},
+            {"name":"Cabañas Sol y Mar","zone":"pelluhue","area":"Condell s/n, Pelluhue","level":"standard","types":["pareja","familia","habitacion"],"price":"Desde $32.000","priceNote":"Hab. matrimonial con baño privado $32.000/noche; depto para 5 personas $70.000/noche.","phone":"+56 9 8753 2450","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 8753 2450"],"phoneVerification":"Confirmado por contacto previo"},
+            {"name":"Cabañas Buena Vista","zone":"pelluhue","area":"San Francisco #1227, Pelluhue","level":"standard","types":["pareja","familia","habitacion"],"price":"Consultar","phone":"+56 9 8727 9837","fb":"https://www.facebook.com/cabanasbuenavistapelluhue","ig":"https://www.instagram.com/cabanasbuenavista_pelluhue/","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 8727 9837"],"phoneVerification":"Confirmado por contacto previo"},
+            {"name":"Cabañas Mar y Sol","zone":"pelluhue","area":"Los Pinos s/n, Mariscadero","level":"standard","types":["pareja","familia"],"price":"Consultar","phone":"+56 9 9153 3873","fb":"https://www.facebook.com/p/Caba%C3%B1as-Mar-y-Sol-Pelluhue-100067674707588/","ig":"https://www.instagram.com/cabanas_mar_y_sol_pelluhue","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 9153 3873"],"phoneVerification":"Confirmado por contacto previo"},
+            {"name":"Cabañas Mar y Luz","zone":"pelluhue","area":"Calle Las Violetas, Pelluhue — dirección exacta NO VERIFICADA","level":"standard","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 5896 6626","fb":"https://www.facebook.com/cabanasmary.luz.pelluhue","ig":"https://www.instagram.com/cabanasmaryluz/","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO","mapQuery":null},
+            {"name":"Cabañas Lomas de Sol","zone":"pelluhue","area":"Sector El Torreón, camino a Curanipe","level":"premium","types":["pareja","familia","grupo"],"price":"Desde $50.000","priceNote":"2 pers $50.000; 4 pers desde $60.000; 6 pers $70.000; 8 pers hasta $120.000.","phone":"+56 9 7668 6728","fb":"https://www.facebook.com/Lomasdesolpelluhue/","web":"https://www.lomasdesolpelluhue.cl/","status":"verified","travel":"≈ 30–35 min","phoneVerification":"NO VERIFICADO"},
+            {"name":"Lodge Casa Vieja","zone":"pelluhue","area":"Ruta M80, sector Casas Viejas","level":"premium","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 4464 2767","fb":"https://www.facebook.com/lodgecasavieja/","ig":"https://www.instagram.com/lodgecasavieja1/","web":"https://www.lodgecasavieja.cl","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 4464 2767"],"phoneVerification":"Confirmado por contacto previo"},
+            {"name":"Cabañas Peuñomar","zone":"pelluhue","area":"Pelluhue / Curanipe","level":"standard","types":["pareja","familia","grupo"],"price":"Consultar","phone":"+56 9 7968 5604","phone2":"+56 9 8838 6955","web":"https://www.peunomar.cl/","status":"verified","travel":"≈ 30–35 min","phoneVerification":"NO VERIFICADO","phone2Verification":"NO VERIFICADO"},
+            {"name":"Cabañas y Departamentos La Palma","zone":"pelluhue","area":"Riquelme entre Prat y Condell","level":"standard","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 9934 4739","phone2":"+56 9 8925 349","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 9934 4739"],"phoneVerification":"Confirmado por contacto previo","phone2Verification":"NO VERIFICADO"},
+            {"name":"Cabañas Terrazas del Mar","zone":"pelluhue","area":"Pelluhue","level":"standard","types":["pareja","familia"],"price":"$80.000","priceNote":"5 personas por noche.","phone":"+56 9 7757 0016","fb":"https://www.facebook.com/p/Terrazas-del-mar-Pelluhue-100064210861541/","web":"https://cabanas-terrazas-del-mar-pelluhue.negocio.site/","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 7757 0016"],"phoneVerification":"Confirmado por contacto previo"},
+            {"name":"Cabañas Alisol","zone":"pelluhue","area":"Cerro La Paloma, Pelluhue","level":"standard","types":["familia"],"price":"Consultar","phone":"+56 9 9874 2805","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 9874 2805"],"phoneVerification":"Confirmado por contacto previo"},
+            {"name":"Cabañas Terrazas de Buena Vista","zone":"pelluhue","area":"Buena Vista, Pelluhue","level":"standard","types":["pareja","familia"],"price":"Desde $45.000","priceNote":"2 pers: $50.000 una noche; $45.000 por noche desde 2 noches; 3 pers: $50.000 por noche (2 habitaciones).","phone":"+56 9 5695 1477","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 5695 1477"],"phoneVerification":"Confirmado por contacto previo"},
+            {"name":"Cabañas Paula Peñailillo","zone":"pelluhue","area":"Buena Vista, Pelluhue","level":"standard","types":["pareja","familia"],"price":"Consultar","phone":"+56 9 6430 8373","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO"},
+            {"name":"Ecolodge Ekilibre","zone":"pelluhue","area":"Coordenadas: -35.885142, -72.679769","level":"premium","types":["pareja","familia"],"price":"$60.000","priceNote":"Por noche, mínimo 2 noches. Máximo 6 personas.","phone":"+56 9 8406 4596","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 8406 4596"],"phoneVerification":"Confirmado por contacto previo","mapQuery":"-35.88514247773798,-72.67976938776171"},
+            {"name":"Residencial El Carmen","zone":"pelluhue","area":"Abdón Fuentealba 310","level":"economico","types":["habitacion","pareja"],"price":"Consultar","phone":"+56 73 250 3215","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO"},
+            {"name":"Cabañas Los Puquios","zone":"pelluhue","area":"Mariscadero, Pelluhue","level":"standard","types":["familia","grupo"],"price":"Desde $70.000","priceNote":"4 personas $70.000/noche; 5 personas $80.000/noche.","phone":"+56 9 9998 1772","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 9998 1772"],"phoneVerification":"Confirmado por contacto previo"},
+            {"name":"Cabañas Casa Blanca","zone":"pelluhue","area":"Pelluhue","level":"standard","types":["familia"],"price":"Consultar","phone":"+56 9 9843 4490","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO"},
+            {"name":"Cabañas Brisas del Pacífico","zone":"pelluhue","area":"Ubicación NO VERIFICADA","level":"standard","types":["pareja","familia"],"price":"Consultar","phone":"+56 9 7460 2229","ig":"https://www.instagram.com/cabanasbrisasdelpacifico","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO","mapQuery":null},
+            {"name":"Camping INALAF","zone":"pelluhue","area":"Las Tres Peñas","level":"economico","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 7368 3857","fb":"https://www.facebook.com/campinginalaf-curanipe","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 7368 3857"],"phoneVerification":"Confirmado por contacto previo"},
+            {"name":"Hotel Blanca Reyes","zone":"pelluhue","area":"Arturo Prat #615, Pelluhue","level":"premium","types":["habitacion","pareja","familia"],"price":"Consultar","phone":"+56 9 9624 7934","fb":"https://www.facebook.com/Hotel-Blanca-Reyes-102698104785756","ig":"https://www.instagram.com/hotelblancareyes/?hl=es","web":"https://www.hotelblancareyes.com/","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 9624 7934"],"phoneVerification":"Confirmado por contacto previo"},
+            {"name":"Hotel de Piedra","zone":"pelluhue","area":"Ubicación NO VERIFICADA","level":"premiumplus","types":["habitacion","pareja","familia"],"price":"Consultar","phone":"+56 9 8206 3889","fb":"https://www.facebook.com/p/Hotel-de-Piedra-Entre-Pelluhue-Y-Curanipe-100064806635819/","ig":"https://www.instagram.com/hoteldepiedrapelluhue/","web":"https://www.hostaldepiedra.cl","status":"verified","travel":"≈ 30–35 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO","mapQuery":null},
+            {"name":"Hotel Piedra Negra","zone":"pelluhue","area":"Ubicación NO VERIFICADA","level":"premium","types":["habitacion","pareja"],"price":"Consultar","phone":"+56 9 8272 4442","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO","mapQuery":null},
+            {"name":"Hotel Boutique Puramar","zone":"pelluhue","area":"Camino a Curanipe km 2","level":"premiumplus","types":["pareja","habitacion"],"price":"$180.000–$550.000","priceNote":"Referencia para viernes/sábado: Deluxe $180.000; Dúplex 4-5 pers $420.000; Villa 8 pers $550.000. Valores informados por alojamiento.","phone":"+56 9 6468 4114","phone2":"+56 42 250 0510","fb":"https://www.facebook.com/puramar.cl/","ig":"https://www.instagram.com/terrazapuramar/","web":"https://www.puramar.cl/","status":"verified","travel":"≈ 30–35 min","whatsappPhones":["+56 9 6468 4114"],"phone2Note":"número fijo / central de reservas","phoneVerification":"Confirmado por contacto previo","phone2Verification":"Fijo; no WhatsApp"},
+            {"name":"Casa Mirador Komütun","zone":"pelluhue","area":"Pelluhue","level":"premium","types":["pareja","familia","grupo"],"price":"Consultar","phone":"+56 9 9038 0900","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO"},
+            {"name":"La Querencia","zone":"pelluhue","area":"Coordenadas: -35.814642, -72.577222","level":"standard","types":["pareja"],"price":"Consultar","phone":"+56 9 3008 7565","ig":"https://www.instagram.com/laquerencia_pelluhue_/","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","mapQuery":"-35.814642058581406,-72.57722270684327"},
+            {"name":"Cabañas Vuelo de Gaviotas","zone":"curanipe","area":"Curanipe","level":"standard","types":["pareja","familia","grupo"],"price":"Consultar","phone":"+56 9 9320 5308","fb":"https://www.facebook.com/vuelogaviotas","web":"https://vuelodegaviotas.cl/","status":"verified","travel":"≈ 35–40 min","phoneVerification":"NO VERIFICADO"},
+            {"name":"Cabañas Don Bosco","zone":"curanipe","area":"Padre Samuel Jofre #72, Curanipe","level":"standard","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 9261 6617","fb":"https://www.facebook.com/Cabdonbosco","status":"verified","travel":"≈ 35–40 min","phoneVerification":"NO VERIFICADO"},
+            {"name":"Cabañas Río Chovellén","zone":"curanipe","area":"Peuño s/n, Río Chovellén","level":"standard","types":["familia","pareja"],"price":"Consultar","phone":"+56 9 6668 4037","fb":"https://www.facebook.com/cabanasriochovellen/","ig":"https://www.instagram.com/espacio_chovellen/","status":"verified","travel":"≈ 35–40 min","whatsappPhones":["+56 9 6668 4037"],"phoneVerification":"Confirmado por contacto previo"},
+            {"name":"Lodge Paihuen","zone":"curanipe","area":"Manuel Montt #250, Curanipe","level":"premium","types":["pareja","habitacion"],"price":"Consultar","phone":"+56 9 9871 4485","fb":"https://www.facebook.com/casapaihuencuranipe/","ig":"https://www.instagram.com/paihuenlodgecuranipe","status":"verified","travel":"≈ 35–40 min","phoneVerification":"NO VERIFICADO"},
+            {"name":"Sirenazo Hostal","zone":"curanipe","area":"Sector Río Chovellén","level":"standard","types":["pareja","familia","grupo"],"price":"Consultar","phone":"+56 9 7550 6714","fb":"https://www.facebook.com/sirenazohostal/?locale=es_LA","status":"verified","travel":"≈ 35–40 min","phoneVerification":"NO VERIFICADO"},
+            {"name":"Hostería Curanipe","zone":"curanipe","area":"Curanipe","level":"standard","types":["habitacion","pareja","familia"],"price":"Consultar","phone":"+56 9 7993 3470","fb":"https://www.facebook.com/hosteria.curanipe.1","status":"confirm","travel":"≈ 35–40 min","phoneVerification":"NO VERIFICADO"},
+            {"name":"Hostería Pueblo Hundido","zone":"curanipe","area":"Pueblo Hundido","level":"standard","types":["habitacion","pareja","grupo"],"price":"Consultar","phone":"+56 9 9219 7478","ig":"https://www.instagram.com/hosteriapueblohundido/","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO"},
+            {"name":"Hostal Lucerna I","zone":"curanipe","area":"Curanipe","level":"economico","types":["habitacion","pareja"],"price":"Consultar","phone":"+56 9 8868 3129","status":"verified","travel":"≈ 35–40 min","phoneVerification":"NO VERIFICADO"},
+            {"name":"Hotel Punta Sirena","zone":"curanipe","area":"Peuño bajo, Curanipe","level":"premiumplus","types":["pareja","habitacion"],"price":"Consultar","phone":"+56 9 6779 8344","fb":"https://www.facebook.com/HotelPuntaSirena/?locale=es_LA","ig":"https://www.instagram.com/puntasirena/","web":"https://puntasirena.com/","status":"verified","travel":"≈ 35–40 min","phoneVerification":"NO VERIFICADO"},
+            {"name":"Cabañas Lovel-van","zone":"curanipe","area":"Lovelvan / Curanipe","level":"standard","types":["pareja","familia","grupo"],"price":"Consultar","phone":"+56 9 7878 3704","booking":"https://www.booking.com/hotel/cl/cabanas-lovel-van.es.html","status":"verified","travel":"≈ 35–40 min","phoneVerification":"NO VERIFICADO"},
+            {"name":"Cabañas Alto Curanipe","zone":"curanipe","area":"Coordenadas: -35.847262, -72.624968","level":"standard","types":["pareja","familia","grupo"],"price":"Consultar","phone":"+56 9 6677 1671","status":"verified","travel":"≈ 35–40 min","phoneVerification":"NO VERIFICADO","mapQuery":"-35.84726272988474,-72.62496845117475"},
+            {"name":"Cabañas Peumayen","zone":"curanipe","area":"Curanipe","level":"standard","types":["pareja","familia"],"price":"Consultar","phone":"+56 9 9199 6388","ig":"https://www.instagram.com/peumayen_casa","status":"verified","travel":"≈ 35–40 min","phoneVerification":"NO VERIFICADO"}
+        ];
+
+        const bColors = ['border-neon-cyan', 'border-neon-green', 'border-neon-orange', 'border-neon-magenta', 'border-neon-purple', 'border-neon-red'];
+        const hColors = ['hover-glow-cyan', 'hover-glow-green', 'hover-glow-orange', 'hover-glow-magenta', 'hover-glow-purple', 'hover-glow-red'];
+        const tColors = ['text-neon-cyan', 'text-neon-green', 'text-neon-orange', 'text-neon-magenta', 'text-neon-purple', 'text-neon-red'];
+        const gColors = ['glow-text-cyan', 'glow-text-green', 'glow-text-orange', 'glow-text-magenta', 'glow-text-purple', 'glow-text-red'];
+
+        function getSocialIcons(x) {
+            let h = '';
+            let phoneToUse = (x.whatsappPhones && x.whatsappPhones.length > 0) ? x.whatsappPhones[0] : (x.whatsapp ? x.whatsapp : (x.phoneVerification && x.phoneVerification.includes('Confirmado') ? x.phone : null));
+            if(phoneToUse) {
+                let clean = phoneToUse.replace(/\D/g,'');
+                let msg = encodeURIComponent("Hola, deseo consultar disponibilidad para el 16 de enero.");
+                h += `<a href="https://wa.me/${clean}?text=${msg}" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-xl bg-neon-green/20 border border-neon-green/50 text-neon-green hover:bg-neon-green hover:text-black transition-all shadow-[0_0_10px_rgba(57,255,20,0.2)] hover:scale-110" title="WhatsApp"><svg viewBox="0 0 24 24" class="w-5 h-5 fill-current"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.08.01a11.94 11.94 0 0 0-10.3 17.92L.36 23.64l5.86-1.38a11.93 11.93 0 0 0 5.85 1.53h.01a11.91 11.91 0 0 0 8.44-20.31ZM12.08 21.81h-.01a9.93 9.93 0 0 1-5.06-1.38l-.36-.22-3.48.82.84-3.39-.23-.37a9.9 9.9 0 1 1 8.3 4.54Zm5.44-7.43c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.95 1.17-.18.2-.35.22-.65.07-.3-.15-1.27-.47-2.41-1.49-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51-.17-.01-.37-.01-.57-.01s-.52.07-.79.37c-.27.3-1.03 1.01-1.03 2.47s1.06 2.86 1.21 3.06c.15.2 2.08 3.17 5.04 4.45.7.3 1.24.48 1.66.62.7.22 1.33.19 1.83.12.56-.08 1.77-.72 2.02-1.41.25-.69.25-1.28.17-1.41-.07-.12-.27-.2-.57-.35Z"/></svg></a>`;
+            }
+            if(x.fb) h += `<a href="${x.fb}" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-500/50 text-blue-400 hover:bg-blue-500 hover:text-white transition-all shadow-[0_0_10px_rgba(59,130,246,0.2)] hover:scale-110" title="Facebook"><svg viewBox="0 0 24 24" class="w-5 h-5 fill-current"><path d="M14.25 21v-7.05h2.75l.41-3.22h-3.16V8.67c0-.93.26-1.56 1.61-1.56h1.69V4.23c-.29-.04-1.29-.13-2.44-.13-2.42 0-4.07 1.48-4.07 4.21v2.42H8.3v3.22h2.74V21h3.21Z"/></svg></a>`;
+            if(x.ig) h += `<a href="${x.ig}" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-xl bg-pink-500/20 border border-pink-500/50 text-pink-400 hover:bg-pink-500 hover:text-white transition-all shadow-[0_0_10px_rgba(236,72,153,0.2)] hover:scale-110" title="Instagram"><svg viewBox="0 0 24 24" class="w-5 h-5 fill-transparent stroke-current stroke-[2.4]" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.1"/><circle cx="17.2" cy="6.8" r="1.15" class="fill-current stroke-none"/></svg></a>`;
+            if(x.web) h += `<a href="${x.web}" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-xl bg-gray-400/20 border border-gray-400/50 text-gray-300 hover:bg-gray-400 hover:text-black transition-all shadow-[0_0_10px_rgba(156,163,175,0.2)] hover:scale-110" title="Sitio Web"><svg viewBox="0 0 24 24" class="w-5 h-5 fill-transparent stroke-current stroke-[2.1]" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3.5 12h17M12 3c2.25 2.45 3.4 5.45 3.4 9S14.25 18.55 12 21M12 3C9.75 5.45 8.6 8.45 8.6 12S10.25 18.55 12 21"/></svg></a>`;
+            return h;
+        }
+
+        function renderCard(x, index) {
+            let idx = index % 6;
+            const cBorder = bColors[idx]; const cHover = hColors[idx]; const cText = tColors[idx]; const cGlow = gColors[idx];
+            
+            let tags = [];
+            if(x.types) tags = tags.concat(x.types.map(t => {
+                if(t==='pareja') return '💑 Pareja';
+                if(t==='familia') return '👨‍👩‍👧 Familia';
+                if(t==='grupo') return '👥 Grupo';
+                if(t==='habitacion') return '🛏️ Habitación';
+                return t;
+            }));
+            const levelNames={economico:"💰 Económico",standard:"🏡 Estándar",premium:"✨ Premium",premiumplus:"👑 Premium Plus"};
+            if(x.level) tags.push(levelNames[x.level]);
+
+            const tagsHtml = tags.map(t => `<span class="bg-black/60 border ${cBorder}/40 ${cText} px-2 py-1 rounded-lg text-[9px] uppercase tracking-widest inline-block">${t}</span>`).join('');
+            
+            // MAPS Y ACCIONES (SIN RUTA)
+            let mapsBtn = '';
+            if(x.mapQuery) {
+                let mapsUrl = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(x.mapQuery);
+                mapsBtn = `<a href="${mapsUrl}" target="_blank" class="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-black border ${cBorder} text-white font-bold text-[10px] uppercase hover:bg-white/10 ${cHover} transition-all shadow-[0_0_10px_rgba(0,0,0,0.5)] group mb-3">
+                    <img src="https://img.icons8.com/color/96/google-maps-new.png" class="w-7 h-7 group-hover:scale-110 transition-transform drop-shadow-lg">
+                    <span class="${cText}">📍 Abrir Ubicación</span>
+                </a>`;
+            }
+
+            let actionButtons = '';
+            if (x.booking) actionButtons += `<a href="${x.booking}" target="_blank" class="text-center py-2 px-3 rounded-xl bg-black border border-blue-400 text-blue-400 text-[9px] font-bold uppercase hover:bg-black/40 hover:shadow-[0_0_15px_rgba(0,122,255,0.4)] transition-all flex-1 min-w-[70px]">🛏️ Booking</a>`;
+            if (x.airbnb) actionButtons += `<a href="${x.airbnb}" target="_blank" class="text-center py-2 px-3 rounded-xl bg-black border border-[#FF5A5F] text-[#FF5A5F] text-[9px] font-bold uppercase hover:bg-black/40 hover:shadow-[0_0_15px_rgba(255,90,95,0.4)] transition-all flex-1 min-w-[70px]">🏠 Airbnb</a>`;
+
+            let socialHtml = getSocialIcons(x);
+
+            // AVISO PRINCIPAL: SOLO "NO VERIFICADO"
+            let isAlojamientoVerified = x.status === 'verified' && (!x.phoneVerification || !x.phoneVerification.includes('NO VERIFICADO')) && (!x.locationVerification || !x.locationVerification.includes('NO VERIFICADO'));
+            const mainBadge = isAlojamientoVerified ? '' : '<span class="text-neon-orange bg-neon-orange/10 border border-neon-orange/30 px-1.5 py-0.5 rounded text-[8px] uppercase tracking-widest" title="Falta Confirmar Alojamiento">⚠️ No Verificado</span>';
+            
+            return `
+            <div class="bg-black/60 border ${cBorder}/50 p-4 rounded-2xl flex flex-col justify-between w-full ${cHover} transition-all duration-300 gap-3">
+                <div>
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="text-sm font-bold text-white pr-2 leading-tight ${cGlow}">${x.name}</h4>
+                        <div class="flex gap-1 shrink-0">${mainBadge}</div>
+                    </div>
+                    <p class="text-[10px] font-mono-code text-gray-300 mb-1">📍 ${x.area}</p>
+                    <div class="flex flex-wrap gap-1.5 my-2">${tagsHtml}</div>
+                    ${x.desc ? `<p class="text-[10px] text-gray-400 font-mono-code mb-2 italic">${x.desc}</p>` : ''}
+                    <div class="flex items-center justify-between border-t border-b border-gray-800 py-2 my-2">
+                        <div class="font-bold text-white text-xs">${x.price || "Consultar Tarifa"}</div>
+                        ${x.travel ? `<div class="text-[9px] font-mono-code text-gray-400">⏱️ ${x.travel}</div>` : ''}
+                    </div>
+                    ${x.phone ? `<p class="text-[10px] font-mono-code text-gray-300 mb-1">📞 ${x.phone}</p>` : ''}
+                    ${x.phone2 ? `<p class="text-[10px] font-mono-code text-gray-300 mb-1">📞 ${x.phone2}</p>` : ''}
+                    ${x.priceNote ? `<p class="text-[9px] text-gray-500 font-mono-code leading-tight mt-1">${x.priceNote}</p>` : ''}
+                </div>
+                <div>
+                    ${socialHtml ? `<div class="flex flex-wrap gap-2 mb-3 border-t border-gray-800 pt-3">${socialHtml}</div>` : ''}
+                    ${mapsBtn}
+                    ${actionButtons ? `<div class="flex flex-wrap gap-2">${actionButtons}</div>` : ''}
+                </div>
+            </div>`;
+        }
+
+        function filterAlojamientos(filterId) {
+            let html = ''; let count = 0;
+            stays.forEach(x => {
+                let isMatch = false;
+                if (filterId === 'all') isMatch = true;
+                else if (x.zone === filterId) isMatch = true;
+                else if (x.level === filterId) isMatch = true;
+                else if (x.types && x.types.includes(filterId)) isMatch = true;
+                
+                if (isMatch) { html += renderCard(x, count); count++; }
+            });
+            document.getElementById('grid-alojamientos').innerHTML = html; lucide.createIcons();
+        }
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => { b.classList.remove('active', 'border-neon-magenta', 'text-neon-magenta'); b.classList.add('border-neon-cyan/50', 'text-neon-cyan/70'); });
+                e.target.classList.remove('border-neon-cyan/50', 'text-neon-cyan/70'); e.target.classList.add('active', 'border-neon-magenta', 'text-neon-magenta');
+                filterAlojamientos(e.target.dataset.filter);
+            });
+        });
+        filterAlojamientos('all');
+
+        const audioEl = document.getElementById('bgAudio'); const playBtn = document.getElementById('playBtn'); const volumeSlider = document.getElementById('volumeSlider'); const vuBars = document.querySelectorAll('.vumeter-bar');
+        let isPlaying = false; let audioCtx = null; let analyser = null; let source = null; let dataArray = null; audioEl.volume = volumeSlider.value;
+        function setupAudioContext() { if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); analyser = audioCtx.createAnalyser(); analyser.fftSize = 512; analyser.minDecibels = -85; analyser.maxDecibels = -15; analyser.smoothingTimeConstant = 0.65; source = audioCtx.createMediaElementSource(audioEl); source.connect(analyser); analyser.connect(audioCtx.destination); dataArray = new Uint8Array(analyser.frequencyBinCount); } }
+        const barHeights = new Array(16).fill(4);
+        function renderVuMeter() { if (isPlaying && analyser) { requestAnimationFrame(renderVuMeter); analyser.getByteFrequencyData(dataArray); const binIndices = [2, 4, 7, 11, 16, 23, 32, 43, 56, 72, 90, 112, 138, 168, 202, 240]; const gains = [0.95, 0.95, 0.95, 1.0, 1.05, 1.1, 1.15, 1.2, 1.25, 1.3, 1.35, 1.4, 1.45, 1.5, 1.55, 1.6]; vuBars.forEach((bar, i) => { const bin = binIndices[i] || i; let raw = (dataArray[bin] || 0) * gains[i]; let normalized = Math.min(1.0, raw / 255.0); let curved = Math.pow(normalized, 1.75); let targetHeight = Math.max(4, Math.min(26, Math.floor(curved * 22) + 4)); if (targetHeight > barHeights[i]) barHeights[i] = targetHeight; else barHeights[i] = Math.max(4, barHeights[i] - 1.8); bar.style.height = barHeights[i].toFixed(1) + 'px'; }); } else { vuBars.forEach((bar, i) => { barHeights[i] = 4; bar.style.height = '4px'; }); } }
+        function toggleAudio() { try { setupAudioContext(); if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume(); } catch (e) {} if (isPlaying) { audioEl.pause(); playBtn.textContent = "▶"; isPlaying = false; } else { audioEl.play().then(() => { playBtn.textContent = "⏸"; isPlaying = true; renderVuMeter(); }).catch(e => {}); } }
+        function adjustVolume(val) { audioEl.volume = val; }
+
+        const canvas = document.getElementById('forestCanvas'); const ctx = canvas.getContext('2d'); let particles = [];
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; } window.addEventListener('resize', resizeCanvas); resizeCanvas();
+        class Particle { constructor() { this.reset(); } reset() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 3.5 + 1; this.speedX = (Math.random() - 0.5) * 0.4; this.speedY = (Math.random() - 0.5) * 0.4 - 0.2; this.alpha = Math.random() * 0.85 + 0.2; const colors = ['#00f3ff', '#39ff14', '#ff007f', '#ff5e00', '#b026ff']; this.color = colors[Math.floor(Math.random() * colors.length)]; } update() { this.x += this.speedX; this.y += this.speedY; if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset(); } draw() { ctx.save(); ctx.globalAlpha = this.alpha; ctx.shadowBlur = 18; ctx.shadowColor = this.color; ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); ctx.restore(); } }
+        for (let i = 0; i < 110; i++) particles.push(new Particle());
+        function animateCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animateCanvas); } animateCanvas();
+    </script>
+</body>
+</html>
