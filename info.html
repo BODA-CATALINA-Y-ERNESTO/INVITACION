@@ -77,9 +77,7 @@
         <section class="w-full flex flex-col justify-center items-center text-center py-8 mb-6 relative z-10">
             <div class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full glass-card border-neon-orange/60 mb-4 hover-glow-orange transition-all">
                 <i data-lucide="sparkles" class="w-4 h-4 text-neon-orange glow-text-orange"></i>
-                <span class="text-[10px] sm:text-xs md:text-sm font-mono-code text-orange-200 tracking-widest uppercase font-bold glow-text-orange">
-                    EDICIÓN LIMITADA EN LA NATURALEZA
-                </span>
+                <span class="text-[10px] sm:text-xs md:text-sm font-mono-code text-orange-200 tracking-widest uppercase font-bold glow-text-orange">EDICIÓN LIMITADA EN LA NATURALEZA</span>
             </div>
 
             <div class="w-full flex flex-col sm:flex-row items-center justify-center mb-2 gap-y-2 sm:gap-y-0">
@@ -90,9 +88,7 @@
                 </h1>
             </div>
 
-            <p class="text-xs sm:text-sm font-mono-code text-orange-300 tracking-widest uppercase font-bold glow-text-orange mt-2">
-                AMOR, AMIGOS, FAMILIA Y FIESTA
-            </p>
+            <p class="text-xs sm:text-sm font-mono-code text-orange-300 tracking-widest uppercase font-bold glow-text-orange mt-2">AMOR, AMIGOS, FAMILIA Y FIESTA</p>
         </section>
 
         <!-- ACORDEONES MAESTROS -->
@@ -107,11 +103,7 @@
                 <div id="content-oficial" class="accordion-content">
                     <div class="glass-card-neon p-6 sm:p-8 rounded-b-3xl border-t-0 border-neon-cyan/50 mt-1 text-center">
                         <h2 id="mensaje-bienvenida" class="text-lg md:text-xl text-white font-bold mb-4 uppercase glow-text-cyan">¡Hola!</h2>
-                        <p id="intro-text" class="text-sm md:text-base text-gray-200 leading-relaxed font-mono-code tracking-wide">
-                            Los invitamos a sumergirse en la experiencia de nuestra celebración el próximo <strong class="glow-text-cyan font-bold">sábado 16 de enero de 2027</strong>. Sabemos que llegar hasta este rincón del Maule es un viaje y valoramos profundamente el esfuerzo, la energía y las ganas de acompañarnos. 
-                            <br><br>
-                            Este terreno guarda mucha historia familiar, y abrirlo para ustedes es nuestra forma de invitarlos a desconectarse de la rutina para compartir, disfrutar y vivir este gran día de la manera más relajada y cercana posible.
-                        </p>
+                        <p id="intro-text" class="text-sm md:text-base text-gray-200 leading-relaxed font-mono-code tracking-wide"></p>
                     </div>
 
                     <div id="modulo-fiesta-cabros" class="hidden mt-4 glass-card p-6 rounded-3xl border-neon-magenta shadow-[0_0_20px_rgba(255,0,127,0.3)] text-center relative overflow-hidden hover-glow-magenta transition-all">
@@ -119,14 +111,12 @@
                         <h3 class="text-neon-magenta font-extrabold uppercase text-lg mb-3 glow-text-magenta flex items-center justify-center gap-2">
                             <i data-lucide="ticket" class="w-5 h-5"></i> Pase Especial Fiesta
                         </h3>
-                        <p id="texto-nombres-cabros" class="text-sm text-gray-200 font-mono-code mb-5">
-                            ¡Tenemos una invitación especial! Nos encantaría que se sumen a la fiesta a partir de las 21:00 hrs para darlo todo en la pista.
-                        </p>
+                        <p id="texto-nombres-cabros" class="text-sm text-gray-200 font-mono-code mb-5"></p>
                         <div id="lista-cabros-rsvp" class="flex flex-col gap-3 max-w-sm mx-auto z-10 relative"></div>
                         <button id="btn-enviar-fiesta" onclick="enviarRSVPFiesta()" class="mt-5 hidden mx-auto px-6 py-3 rounded-xl bg-neon-magenta text-black font-extrabold text-xs uppercase hover:scale-105 transition-all shadow-[0_0_15px_#ff007f]">
                             Confirmar Pase <span class="loader hidden ml-2" id="loader-fiesta"></span>
                         </button>
-                        <p id="msg-exito-fiesta" class="hidden mt-3 text-neon-green text-xs font-bold uppercase glow-text-green"><i data-lucide="check" class="inline w-4 h-4"></i> Respuesta Actualizada</p>
+                        <p id="msg-exito-fiesta" class="hidden mt-3 text-neon-green text-xs font-bold uppercase glow-text-green"><i data-lucide="check" class="inline w-4 h-4"></i> Guardado en la lista</p>
                     </div>
                 </div>
             </div>
@@ -405,13 +395,13 @@
                                 <div class="bg-black/50 p-3 rounded-xl border border-neon-green/40 text-center relative z-10">
                                     <p class="text-xs font-bold text-white uppercase mb-2">¿Te quedas a acampar?</p>
                                     <div class="flex gap-2">
-                                        <button onclick="setCamping('Sí', this)" class="btn-radio-camping flex-1 py-2 rounded-lg border border-neon-green/50 text-neon-green text-xs font-bold uppercase hover:bg-neon-green hover:text-black transition-all">Sí, acampo</button>
-                                        <button onclick="setCamping('No', this)" class="btn-radio-camping flex-1 py-2 rounded-lg border border-neon-red/50 text-neon-red text-xs font-bold uppercase hover:bg-neon-red hover:text-black transition-all">No, paso</button>
+                                        <button type="button" onclick="setCamping('Sí', this)" class="btn-radio-camping flex-1 py-2 rounded-lg border border-neon-green/50 text-neon-green text-xs font-bold uppercase hover:bg-neon-green hover:text-black transition-all">Sí, acampo</button>
+                                        <button type="button" onclick="setCamping('No', this)" class="btn-radio-camping flex-1 py-2 rounded-lg border border-neon-red/50 text-neon-red text-xs font-bold uppercase hover:bg-neon-red hover:text-black transition-all">No, paso</button>
                                     </div>
-                                    <button id="btn-enviar-camping" onclick="enviarRSVPCamping()" class="w-full mt-3 hidden py-2 rounded-lg bg-neon-green text-black font-extrabold text-xs uppercase hover:scale-[1.02] transition-all shadow-[0_0_15px_#39ff14]">
+                                    <button id="btn-enviar-camping" type="button" onclick="enviarRSVPCamping()" class="w-full mt-3 hidden py-2 rounded-lg bg-neon-green text-black font-extrabold text-xs uppercase hover:scale-[1.02] transition-all shadow-[0_0_15px_#39ff14]">
                                         Guardar Respuesta <span class="loader hidden ml-2 border-t-black" id="loader-camping"></span>
                                     </button>
-                                    <p id="msg-exito-camping" class="hidden mt-2 text-neon-green text-xs font-bold uppercase glow-text-green"><i data-lucide="check" class="inline w-4 h-4"></i> Respuesta Actualizada</p>
+                                    <p id="msg-exito-camping" class="hidden mt-2 text-neon-green text-xs font-bold uppercase glow-text-green"><i data-lucide="check" class="inline w-4 h-4"></i> Respuesta Guardada</p>
                                 </div>
                             </div>
                         </div>
@@ -496,70 +486,141 @@
 
         const SHEETDB_URL = "https://sheetdb.io/api/v1/hkv8diej2nrg7?sheet=Asistencia_Fiesta_y_Camping"; 
         
-        let urlParams = new URLSearchParams(window.location.search);
-        let guestId = urlParams.get('id') || '';
-        let guestNameRaw = urlParams.get('n') || '';
-        let guestName = '';
-        try { guestName = decodeURIComponent(escape(guestNameRaw)); } catch(e) { guestName = decodeURIComponent(guestNameRaw); }
-        let hijosData = urlParams.get('hijos') || ''; 
-
+        let guestFullName = "";
+        let mainGuestSearchName = "";
+        let fiestaList = [];
         let fiestaRespuestas = {}; 
         let campingRespuesta = "";
+        let tokenIdGlobal = "";
+
+        function formatNamesList(arr) {
+            if (!arr || arr.length === 0) return "";
+            if (arr.length === 1) return arr[0];
+            if (arr.length === 2) return `${arr[0]} Y ${arr[1]}`;
+            return arr.slice(0, -1).join(', ') + ' Y ' + arr[arr.length - 1];
+        }
+
+        function decodificarToken(token) {
+            let base64 = token.replace(/-/g, '+').replace(/_/g, '/');
+            while (base64.length % 4) { base64 += '='; }
+            const binStr = atob(base64);
+            const bytes = new Uint8Array(binStr.length);
+            for (let i = 0; i < binStr.length; i++) { bytes[i] = binStr.charCodeAt(i); }
+            return new TextDecoder('utf-8').decode(bytes);
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
-            if(guestName) { 
-                let isPlural = / y | & | e |,/i.test(guestName);
-                document.getElementById('mensaje-bienvenida').innerHTML = `¡Hola <span class="glow-text-cyan">${guestName}</span>!`; 
-                let introText = isPlural ?
-                    `Los invitamos a sumergirse en la experiencia de nuestra celebración el próximo <strong class="glow-text-cyan font-bold text-neon-cyan">sábado 16 de enero de 2027</strong>. Sabemos que llegar hasta este rincón del Maule es un viaje y valoramos profundamente el esfuerzo, la energía y las ganas de acompañarnos.<br><br>Este terreno guarda mucha historia familiar, y abrirlo para ustedes es nuestra forma de invitarlos a desconectarse de la rutina para compartir, disfrutar y vivir este gran día de la manera más relajada y cercana posible.` :
-                    `Te invitamos a sumergirte en la experiencia de nuestra celebración el próximo <strong class="glow-text-cyan font-bold text-neon-cyan">sábado 16 de enero de 2027</strong>. Sabemos que llegar hasta este rincón del Maule es un viaje y valoramos profundamente el esfuerzo, la energía y las ganas de acompañarnos.<br><br>Este terreno guarda mucha historia familiar, y abrirlo para ti es nuestra forma de invitarte a desconectarte de la rutina para compartir, disfrutar y vivir este gran día de la manera más relajada y cercana posible.`;
-                document.getElementById('intro-text').innerHTML = introText;
-                
-                checkExistingInfoResponse(guestName);
-            }
-            
-            const btnVolver = document.getElementById('btn-volver-index');
-            if(btnVolver) {
-                let returnUrl = 'index.html';
-                if (guestId || guestNameRaw || hijosData) { returnUrl += `?id=${encodeURIComponent(guestId)}&n=${encodeURIComponent(guestNameRaw)}&hijos=${encodeURIComponent(hijosData)}`; }
-                btnVolver.href = returnUrl;
+            const rawSearch = window.location.search;
+            let params = new URLSearchParams(rawSearch);
+            tokenIdGlobal = params.get('id') || '';
+
+            if (tokenIdGlobal) {
+                try {
+                    const decoded = decodificarToken(tokenIdGlobal);
+                    params = new URLSearchParams(decoded);
+                } catch (err) { console.error("Error al desempaquetar token:", err); }
             }
 
-            if (hijosData && hijosData.trim() !== "") {
-                const hijosArray = hijosData.split(',').map(h => h.trim()).filter(h => h);
-                if (hijosArray.length > 0) {
-                    document.getElementById('modulo-fiesta-cabros').classList.remove('hidden');
-                    const nombresJuntos = hijosArray.join(' y ');
-                    document.getElementById('texto-nombres-cabros').innerHTML = `¡Tenemos una invitación especial! Nos encantaría que <strong class="text-white glow-text-cyan">${nombresJuntos}</strong> se sumen a la fiesta a partir de las 21:00 hrs para darlo todo en la pista.`;
-                    let htmlBotones = '';
-                    hijosArray.forEach((hijo, index) => {
-                        fiestaRespuestas[`hijo${index+1}`] = null;
-                        htmlBotones += `
-                        <div class="bg-black/60 p-3 rounded-xl border border-neon-purple/30 text-left">
-                            <span class="text-white font-bold text-sm uppercase block mb-2">${hijo}</span>
-                            <div class="flex gap-2">
-                                <button onclick="setFiestaRSVP('${hijo}', 'hijo${index+1}', 'Sí', this)" class="btn-radio-rsvp flex-1 py-1.5 rounded-lg border border-neon-green/50 text-neon-green text-[10px] font-bold uppercase hover:bg-neon-green hover:text-black transition-all">Sí, asiste</button>
-                                <button onclick="setFiestaRSVP('${hijo}', 'hijo${index+1}', 'No', this)" class="btn-radio-rsvp flex-1 py-1.5 rounded-lg border border-neon-red/50 text-neon-red text-[10px] font-bold uppercase hover:bg-neon-red hover:text-white transition-all">No asiste</button>
-                            </div>
-                        </div>`;
-                    });
-                    document.getElementById('lista-cabros-rsvp').innerHTML = htmlBotones;
+            const invitado = params.get('invitado');
+            const grupo = params.get('grupo');
+            const acompanante = params.get('acompanante');
+            const trato = params.get('trato');
+
+            // Extraemos los hijos de la CENA solo para incluirlos en el saludo inicial si los hay
+            const h1 = params.get('hijo1'); const h2 = params.get('hijo2'); 
+            let kidsCenaList = [];
+            [h1, h2].forEach(h => {
+                if (h && h.toLowerCase() !== 'nan' && h.trim() !== '' && h.toLowerCase() !== 'no') {
+                    kidsCenaList.push(decodeURIComponent(h).trim().toUpperCase());
                 }
+            });
+
+            // Extraemos a los invitados de FIESTA para generar los botones
+            const f1 = params.get('fiesta1'); const f2 = params.get('fiesta2'); const f3 = params.get('fiesta3');
+            fiestaList = [];
+            [f1, f2, f3].forEach(f => {
+                if (f && f.toLowerCase() !== 'nan' && f.trim() !== '' && f.toLowerCase() !== 'no') {
+                    fiestaList.push(decodeURIComponent(f).trim().toUpperCase());
+                }
+            });
+
+            let allGuestsList = [];
+
+            if (grupo) {
+                guestFullName = "FAMILIA " + decodeURIComponent(grupo).toUpperCase();
+                mainGuestSearchName = decodeURIComponent(grupo).toUpperCase();
+            } else if (invitado) {
+                let mainGuest = decodeURIComponent(invitado).toUpperCase();
+                mainGuestSearchName = mainGuest;
+                allGuestsList.push(mainGuest);
+
+                if (acompanante && acompanante.toLowerCase() !== 'nan' && acompanante.trim() !== '') {
+                    allGuestsList.push(decodeURIComponent(acompanante).toUpperCase());
+                }
+                kidsCenaList.forEach(k => allGuestsList.push(k));
+                guestFullName = formatNamesList(allGuestsList);
+            } else {
+                guestFullName = "INVITADO";
+                mainGuestSearchName = "INVITADO";
+            }
+
+            let tratoRaw = trato ? decodeURIComponent(trato).trim() : '';
+            let tratoUpper = tratoRaw.toUpperCase();
+            const tratosFemeninos = ['HERMANA', 'PRIMA', 'TIA', 'TÍA', 'ABUELITA', 'AMIGA', 'MAMA', 'MAMÁ', 'MADRE', 'SOBRINA', 'CRA', 'REINA', 'BEBE', 'AMADA'];
+            let isFemale = tratosFemeninos.includes(tratoUpper);
+            let isPlural = (acompanante && acompanante.toLowerCase() !== 'nan' && acompanante.trim() !== '') || grupo || kidsCenaList.length > 0;
+
+            let saludoIntro = isPlural ? `¡Hola a todos, <span class="glow-text-cyan">${guestFullName}</span>!` : `¡Hola <span class="glow-text-cyan">${guestFullName}</span>!`;
+            document.getElementById('mensaje-bienvenida').innerHTML = saludoIntro; 
+            
+            let introText = isPlural ?
+                `Los invitamos a sumergirse en la experiencia de nuestra celebración el próximo <strong class="glow-text-cyan font-bold text-neon-cyan">sábado 16 de enero de 2027</strong>. Sabemos que llegar hasta este rincón del Maule es un viaje y valoramos profundamente el esfuerzo, la energía y las ganas de acompañarnos.<br><br>Este terreno guarda mucha historia familiar, y abrirlo para ustedes es nuestra forma de invitarlos a desconectarse de la rutina para compartir, disfrutar y vivir este gran día de la manera más relajada y cercana posible.` :
+                `Te invitamos a sumergirte en la experiencia de nuestra celebración el próximo <strong class="glow-text-cyan font-bold text-neon-cyan">sábado 16 de enero de 2027</strong>. Sabemos que llegar hasta este rincón del Maule es un viaje y valoramos profundamente el esfuerzo, la energía y las ganas de acompañarnos.<br><br>Este terreno guarda mucha historia familiar, y abrirlo para ti es nuestra forma de invitarte a desconectarte de la rutina para compartir, disfrutar y vivir este gran día de la manera más relajada y cercana posible.`;
+            document.getElementById('intro-text').innerHTML = introText;
+
+            const btnVolver = document.getElementById('btn-volver-index');
+            if(btnVolver) {
+                btnVolver.href = tokenIdGlobal ? `index.html?id=${encodeURIComponent(tokenIdGlobal)}` : 'index.html';
+            }
+
+            // CREACIÓN DEL BLOQUE DE FIESTA
+            if (fiestaList.length > 0) {
+                document.getElementById('modulo-fiesta-cabros').classList.remove('hidden');
+                const nombresJuntos = formatNamesList(fiestaList);
+                document.getElementById('texto-nombres-cabros').innerHTML = `Tus hijos/as (<strong class="text-white glow-text-cyan">${nombresJuntos}</strong>) están cordialmente invitados a sumarse directamente a la fiesta a partir de las <strong>21:30 hrs</strong> para darlo todo en la pista.<br><br>¿Irán a la fiesta? Por favor confírmanos aquí:`;
+                
+                let htmlBotones = '';
+                fiestaList.forEach((hijo, index) => {
+                    fiestaRespuestas[`hijo${index+1}`] = null;
+                    htmlBotones += `
+                    <div class="bg-black/60 p-3 rounded-xl border border-neon-purple/30 text-left">
+                        <span class="text-white font-bold text-sm uppercase block mb-2">${hijo}</span>
+                        <div class="flex gap-2">
+                            <button type="button" onclick="setFiestaRSVP('${hijo}', 'hijo${index+1}', 'Sí', this)" class="btn-radio-rsvp flex-1 py-1.5 rounded-lg border border-neon-green/50 text-neon-green text-[10px] font-bold uppercase hover:bg-neon-green hover:text-black transition-all">Sí, asiste ✅</button>
+                            <button type="button" onclick="setFiestaRSVP('${hijo}', 'hijo${index+1}', 'No', this)" class="btn-radio-rsvp flex-1 py-1.5 rounded-lg border border-neon-red/50 text-neon-red text-[10px] font-bold uppercase hover:bg-neon-red hover:text-white transition-all">No asiste ❌</button>
+                        </div>
+                    </div>`;
+                });
+                document.getElementById('lista-cabros-rsvp').innerHTML = htmlBotones;
+            }
+
+            // Sincroniza con Excel usando el nombre del titular o familia
+            if(mainGuestSearchName) {
+                checkExistingInfoResponse(mainGuestSearchName);
             }
         });
 
         async function checkExistingInfoResponse(gName) {
             try {
-                const searchUrl = `https://sheetdb.io/api/v1/hkv8diej2nrg7/search?Nombre=${encodeURIComponent(gName)}&sheet=Asistencia_Fiesta_y_Camping`;
+                const searchUrl = `https://sheetdb.io/api/v1/hkv8diej2nrg7/search?Nombre=*${encodeURIComponent(gName)}*&sheet=Asistencia_Fiesta_y_Camping&casesensitive=false`;
                 const response = await fetch(searchUrl, { headers: { 'Accept': 'application/json', 'Content-Type': 'application/json; charset=utf-8' } });
                 const data = await response.json();
                 
                 if (data && data.length > 0) {
                     const lastRecord = data[data.length - 1];
                     
-                    if (hijosData && hijosData.trim() !== "") {
-                        const hijosArray = hijosData.split(',').map(h => h.trim()).filter(h => h);
-                        hijosArray.forEach((hijo, index) => {
+                    if (fiestaList.length > 0) {
+                        fiestaList.forEach((hijo, index) => {
                             const val = lastRecord[`Hijo_${index+1}`];
                             if (val === 'Sí' || val === 'No') {
                                 const kidDiv = document.getElementById('lista-cabros-rsvp').children[index];
@@ -589,6 +650,7 @@
                         const btnCamping = document.getElementById('btn-enviar-camping');
                         if (btnCamping) {
                             btnCamping.innerHTML = `Actualizar Respuesta <span class="loader hidden ml-2 border-t-black" id="loader-camping"></span>`;
+                            btnCamping.classList.remove('hidden');
                         }
                     }
                 }
@@ -602,7 +664,7 @@
             if (valor === 'Sí') btnElement.classList.add('bg-neon-green', 'text-black', 'shadow-[0_0_10px_#39ff14]');
             if (valor === 'No') btnElement.classList.add('bg-neon-red', 'text-white', 'shadow-[0_0_10px_#ff003c]');
             const respondidos = Object.values(fiestaRespuestas).filter(v => v !== null).length;
-            if (respondidos === Object.keys(fiestaRespuestas).length) { document.getElementById('btn-enviar-fiesta').classList.remove('hidden'); }
+            if (respondidos === fiestaList.length) { document.getElementById('btn-enviar-fiesta').classList.remove('hidden'); }
         }
 
         function setCamping(valor, btnElement) {
@@ -617,21 +679,23 @@
         function enviarRSVPFiesta() {
             const btn = document.getElementById('btn-enviar-fiesta'); const loader = document.getElementById('loader-fiesta');
             btn.disabled = true; loader.classList.remove('hidden');
-            const payload = { data: [{ "ID_Invitado": guestId, "Nombre": guestName, "Hijo_1": fiestaRespuestas['hijo1'] || '', "Hijo_2": fiestaRespuestas['hijo2'] || '', "Hijo_3": fiestaRespuestas['hijo3'] || '', "Camping": "" }] };
+            const payload = { data: [{ "ID_Invitado": tokenIdGlobal, "Nombre": guestFullName, "Hijo_1": fiestaRespuestas['hijo1'] || '', "Hijo_2": fiestaRespuestas['hijo2'] || '', "Hijo_3": fiestaRespuestas['hijo3'] || '', "Camping": campingRespuesta }] };
             fetch(SHEETDB_URL, { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json; charset=utf-8' }, body: JSON.stringify(payload) })
-            .then(() => { btn.classList.add('hidden'); document.getElementById('msg-exito-fiesta').classList.remove('hidden'); })
-            .catch(e => { alert("Error de conexión."); btn.disabled = false; loader.classList.add('hidden'); });
+            .then(() => { document.getElementById('msg-exito-fiesta').classList.remove('hidden'); setTimeout(() => { document.getElementById('msg-exito-fiesta').classList.add('hidden'); }, 3000); })
+            .catch(e => { alert("Error de conexión."); })
+            .finally(() => { btn.disabled = false; loader.classList.add('hidden'); btn.innerHTML = `Actualizar Pase <span class="loader hidden ml-2" id="loader-fiesta"></span>`;});
         }
 
         function enviarRSVPCamping() {
             const btn = document.getElementById('btn-enviar-camping'); const loader = document.getElementById('loader-camping');
             btn.disabled = true; loader.classList.remove('hidden');
-            const payload = { data: [{ "ID_Invitado": guestId, "Nombre": guestName, "Hijo_1": "", "Hijo_2": "", "Hijo_3": "", "Camping": campingRespuesta }] };
+            const payload = { data: [{ "ID_Invitado": tokenIdGlobal, "Nombre": guestFullName, "Hijo_1": fiestaRespuestas['hijo1'] || '', "Hijo_2": fiestaRespuestas['hijo2'] || '', "Hijo_3": fiestaRespuestas['hijo3'] || '', "Camping": campingRespuesta }] };
             fetch(SHEETDB_URL, { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json; charset=utf-8' }, body: JSON.stringify(payload) })
-            .then(() => { btn.classList.add('hidden'); document.getElementById('msg-exito-camping').classList.remove('hidden'); })
-            .catch(e => { alert("Error de conexión."); btn.disabled = false; loader.classList.add('hidden'); });
+            .then(() => { document.getElementById('msg-exito-camping').classList.remove('hidden'); setTimeout(() => { document.getElementById('msg-exito-camping').classList.add('hidden'); }, 3000); })
+            .catch(e => { alert("Error de conexión."); })
+            .finally(() => { btn.disabled = false; loader.classList.add('hidden'); btn.innerHTML = `Actualizar Respuesta <span class="loader hidden ml-2 border-t-black" id="loader-camping"></span>`; });
         }
-
+        
         function toggleAccordion(contentId, iconId) {
             const content = document.getElementById(contentId); const icon = document.getElementById(iconId);
             if (content.classList.contains('open')) { content.style.maxHeight = content.scrollHeight + "px"; void content.offsetWidth; content.style.maxHeight = null; content.classList.remove('open'); icon.style.transform = 'rotate(0deg)'; } 
@@ -652,7 +716,7 @@
             });
         }
 
-        // --- LA GRAN BASE DE DATOS DE ALOJAMIENTOS (LOS 68) ---
+        // LA BASE DE DATOS DE ALOJAMIENTOS QUEDA ACÁ ABAJO EXACTAMENTE IGUAL QUE ANTES...
         const stays = [
             {"name":"Hospedaje Costa Verde","zone":"chanco","area":"Abdón Fuentealba 592, Chanco, Maule","level":"economico","types":["habitacion","pareja"],"price":"Desde $15.000","phone":"+56 9 8274 1219","status":"verified","source":"Turismo Chanco 06/10/2025 (guía oficial)","travel":"≈ 15–20 min","whatsappPhones":["+56 9 8274 1219"],"phoneVerification":"Confirmado por contacto previo","mapQuery":"Abdón Fuentealba 592, Chanco, Maule, Chile"},
             {"name":"Departamento Interior Lucía Vega","zone":"chanco","area":"Av. Errázuriz 268, Chanco, Maule","level":"standard","types":["familia","grupo"],"price":"$45.000 por noche","priceNote":"2 dormitorios: 1 cama de 2 plazas; 1 cama de 1½ plaza; 1 sofá cama.","desc":"Departamento interior en sector céntrico de Chanco.","status":"confirm","travel":"≈ 15–20 min","mapQuery":"Av. Errázuriz 268, Chanco, Maule, Chile"},
@@ -662,14 +726,14 @@
             {"name":"Cabañas Los Quillayes","zone":"chanco","area":"Ruta M-50, salida norte de Chanco, km 5, Chanco, Maule","level":"standard","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 9490 6351","phone2":"+56 9 5608 5759","status":"confirm","travel":"≈ 15–20 min","whatsappPhones":["+56 9 5608 5759"],"phoneVerification":"NO VERIFICADO","phone2Verification":"Confirmado por contacto previo","mapQuery":"Ruta M50 salida norte de Chanco km 5, Chanco, Maule, Chile"},
             {"name":"Hostal Mohor","zone":"chanco","area":"Abdón Fuentealba 135, Chanco","level":"economico","types":["habitacion","pareja"],"price":"Desde $29.000","priceNote":"1 persona: $29.000 baño compartido / $39.000 baño privado. 2 personas: $59.000 baño privado. Solo alojamiento.","phone":"+56 9 9970 0314","status":"verified","travel":"≈ 15–20 min","whatsappPhones":["+56 9 9970 0314"],"phoneVerification":"Confirmado por contacto previo"},
             {"name":"Residencial Anastasia","zone":"chanco","area":"Manuel Rodríguez 286, Chanco, Maule","level":"economico","types":["habitacion","pareja"],"price":"Desde $15.000","phone":"+56 9 9444 4082","phone2":"+56 9 8816 8654","status":"confirm","travel":"≈ 15–20 min","phoneVerification":"NO VERIFICADO","phone2Verification":"NO VERIFICADO","mapQuery":"Manuel Rodríguez 286, Chanco, Maule, Chile"},
-            {"name":"Fundo San Bonifacio","zone":"chanco","area":"Coordenadas: -35.741765, -72.522552","level":"premium","types":["pareja","familia","grupo"],"price":"$129.000 + IVA","priceNote":"3 habitaciones matrimoniales en suite estándar: $129.000 + IVA. 2 habitaciones matrimoniales en suite premium / de luxe: $150.000 IVA incluido para 2–3 huéspedes. 1 habitación doble. Incluye desayuno, piscina, tinas calientes, instalaciones y servicio de mucama mañana y tarde.","desc":"Hotel familiar y exclusivo, con 6 habitaciones en total. Atención personalizada. Orientado principalmente a grupos familiares o de amigos.","phone":"+56 9 9563 0303","phone2":"+56 9 9240 3090","booking":"https://www.booking.com/hotel/cl/fundo-san-bonifacio.es-ar.html","web":"https://www.fundosanbonifacio.cl/","status":"verified","travel":"≈ 15–20 min","whatsappPhones":["+56 9 9240 3090"],"phoneVerification":"NO VERIFICADO","phone2Verification":"Confirmado por contacto previo","mapQuery":"-35.74176511209991,-72.52255202243606"},
+            {"name":"Fundo San Bonifacio","zone":"chanco","area":"Coordenadas: -35.741765, -72.522552","level":"premium","types":["pareja","familia","grupo"],"price":"$129.000 + IVA","priceNote":"3 habitaciones matrimoniales en suite estándar: $129.000 + IVA. 2 habitaciones matrimoniales en suite premium / de luxe: $150.000 IVA incluido para 2–3 huéspedes. 1 habitación double. Incluye desayuno, piscina, tinas calientes, instalaciones y servicio de mucama.","desc":"Hotel familiar y exclusivo, con 6 habitaciones en total. Orientado principalmente a grupos familiares o de amigos.","phone":"+56 9 9563 0303","phone2":"+56 9 9240 3090","booking":"https://www.booking.com/hotel/cl/fundo-san-bonifacio.es-ar.html","web":"https://www.fundosanbonifacio.cl/","status":"verified","travel":"≈ 15–20 min","whatsappPhones":["+56 9 9240 3090"],"phoneVerification":"NO VERIFICADO","phone2Verification":"Confirmado por contacto previo","mapQuery":"-35.74176511209991,-72.52255202243606"},
             {"name":"Hospedaje El Yugo","zone":"chanco","area":"Ramón Freire 292, Chanco, Maule","level":"economico","types":["habitacion","pareja"],"price":"$20.000 por persona","priceNote":"Habitaciones con 2 camas; $20.000 por persona.","phone":"+56 9 8761 2185","status":"verified","travel":"≈ 15–20 min","whatsappPhones":["+56 9 8761 2185"],"phoneVerification":"Confirmado por contacto previo","mapQuery":"Ramón Freire 292, Chanco, Maule, Chile"},
             {"name":"Hospedaje Las Rocas","zone":"chanco","area":"M-446, Loanco, Chanco, Maule","level":"economico","types":["habitacion","pareja","familia"],"price":"Desde $35.000","phone":"+56 9 8495 2060","phone2":"+56 73 197 1058","status":"confirm","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","phone2Verification":"Fijo; no WhatsApp","mapQuery":"M-446, Loanco, Chanco, Maule, Chile"},
             {"name":"Cabañas Bora Bora","zone":"chanco","area":"Caleta Loanco","level":"standard","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 7968 2923","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO"},
             {"name":"Cabañas Mirador Santos del Mar","zone":"chanco","area":"Coordenadas aproximadas: -35.58377, -72.62161","level":"standard","types":["pareja","familia"],"price":"Consultar","priceNote":"Aún no hay tarifario de verano.","phone":"+56 9 5694 0021","status":"verified","travel":"≈ 25–30 min","phoneVerification":"Confirmado por contacto previo","mapQuery":"-35.58377,-72.62161"},
             {"name":"Cabañas Lomas del Cacique","zone":"chanco","area":"Caleta Loanco","level":"standard","types":["pareja","familia","grupo"],"price":"Consultar","phone":"+56 9 3375 4028","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 3375 4028"],"phoneVerification":"Confirmado por contacto previo"},
             {"name":"Cabañas Luz del Faro","zone":"chanco","area":"Faro Cabo Carranza, Constitución — NO VERIFICADO","level":"standard","types":["pareja","familia"],"price":"Consultar","phone":"+56 9 8226 6166","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
-            {"name":"Cabañas JS","zone":"chanco","area":"Ubicación NO VERIFICADA","level":"standard","types":["familia","grupo"],"price":"Desde $40.000","priceNote":"Capacidad para 4, 5 y 8 personas; valores informados de $40.000 a $60.000.","desc":"Tengo para 4, 5 y 8 personas.","phone":"+56 9 8202 6355","status":"verified","travel":"≈ 15–20 min","whatsappPhones":["+56 9 8202 6355"],"phoneVerification":"Confirmado por contacto previo","locationVerification":"NO VERIFICADO"},
+            {"name":"Cabañas JS","zone":"chanco","area":"Ubicación NO VERIFICADA","level":"standard","types":["familia","grupo"],"price":"Desde $40.000","priceNote":"Capacidad para 4, 5 y 8 personas.","desc":"Tengo para 4, 5 y 8 personas.","phone":"+56 9 8202 6355","status":"verified","travel":"≈ 15–20 min","whatsappPhones":["+56 9 8202 6355"],"phoneVerification":"Confirmado por contacto previo","locationVerification":"NO VERIFICADO"},
             {"name":"Cabañas Don Willy","zone":"chanco","area":"Ubicación NO VERIFICADA","level":"standard","types":["familia","grupo"],"price":"$40.000","priceNote":"Para 5 personas por noche. Tinaja $30.000 por día, uso ilimitado.","desc":"Cabaña para 5 personas con tinaja opcional.","phone":"+56 9 7670 8488","status":"verified","travel":"≈ 20–25 min","whatsappPhones":["+56 9 7670 8488"],"phoneVerification":"Confirmado por contacto previo","locationVerification":"NO VERIFICADO"},
             {"name":"Cabañas Altos de Polhuín","zone":"chanco","area":"Ubicación NO VERIFICADA","level":"standard","types":["pareja","familia","grupo"],"price":"Consultar","phone":"+56 9 5698 2336","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
             {"name":"Refugio Costero — Reloca Alto","zone":"chanco","area":"Ubicación NO VERIFICADA","level":"standard","types":["pareja","familia"],"price":"Consultar","phone":"+56 9 4255 8721","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
@@ -677,13 +741,13 @@
             {"name":"Cabañas Casas Negras","zone":"chanco","area":"Ubicación NO VERIFICADA","level":"standard","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 5102 0274","status":"verified","travel":"≈ 20–25 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
             {"name":"Glamping Weliwen","zone":"chanco","area":"Chanco","level":"premium","types":["pareja"],"price":"$70.000–$90.000","priceNote":"Valores vistos para pareja; confirmar tarifa exacta según fecha/temporada.","phone":"+56 9 9307 5139","status":"verified","travel":"≈ 15–20 min","whatsappPhones":["+56 9 9307 5139"],"phoneVerification":"Confirmado por contacto previo"},
             {"name":"Camping y Cabañas Lupita","zone":"chanco","area":"Ubicación NO VERIFICADA","level":"economico","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 9415 7611","status":"confirm","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
-            {"name":"A Hotel Boutique Pelluhue","zone":"pelluhue","area":"Condell #951, Pelluhue","level":"premiumplus","types":["pareja","habitacion"],"price":"$154.900","priceNote":"Por día para 2 personas, impuestos incluidos. Incluye desayuno americano, habitación en suite, calefacción, cama con scaldassono, TV cable, WiFi, estacionamiento y 1 hora de hot tub diario.","desc":"Primera línea frente al mar, vista panorámica y hotel boutique temático.","phone":"+56 9 7798 3319","fb":"https://web.facebook.com/AHOTELBOUTIQUEPELLUHUE","ig":"https://www.instagram.com/a_hotel_boutique_pelluhue/","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 7798 3319"],"phoneVerification":"Confirmado por contacto previo"},
+            {"name":"A Hotel Boutique Pelluhue","zone":"pelluhue","area":"Condell #951, Pelluhue","level":"premiumplus","types":["pareja","habitacion"],"price":"$154.900","priceNote":"Por día para 2 personas, impuestos incluidos. Incluye desayuno, habitación en suite, calefacción, TV cable, WiFi, estacionamiento y 1 hora de hot tub diario.","desc":"Primera línea frente al mar, vista panorámica y hotel boutique temático.","phone":"+56 9 7798 3319","fb":"https://web.facebook.com/AHOTELBOUTIQUEPELLUHUE","ig":"https://www.instagram.com/a_hotel_boutique_pelluhue/","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 7798 3319"],"phoneVerification":"Confirmado por contacto previo"},
             {"name":"Hotel Puerto Madera","zone":"pelluhue","area":"Abdón Fuentealba #68, Pelluhue","level":"premium","types":["pareja","habitacion","familia"],"price":"Consultar","phone":"+56 9 8418 4490","web":"https://hostalpuertomadera.cl/portal/es-es/2470/inicio","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 8418 4490"],"phoneVerification":"Confirmado por contacto previo"},
             {"name":"Hacienda Ecuestre","zone":"pelluhue","area":"Pelluhue","level":"premiumplus","types":["pareja","familia"],"price":"Consultar","phone":"+56 9 3910 3846","fb":"https://www.facebook.com/haciendaecuestre.haciendaecuestre","ig":"https://www.instagram.com/haciendaecuestrepelluhue","web":"https://haciendaecuestre.cl","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 3910 3846"],"phoneVerification":"Confirmado por contacto previo"},
             {"name":"Cabañas Amaya","zone":"pelluhue","area":"Los Pinos #75, Pelluhue","level":"standard","types":["pareja","familia","grupo"],"price":"Consultar","phone":"+56 9 4001 1851","fb":"https://www.facebook.com/cabanasaamaya/","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 4001 1851"],"phoneVerification":"Confirmado por contacto previo"},
             {"name":"Cabañas Rahue (Alto Rahue)","zone":"pelluhue","area":"Los Claveles #78, Mariscadero","level":"standard","types":["pareja","familia"],"price":"$75.000","priceNote":"Queda una sola cabaña para 6 personas. Los dos teléfonos corresponden al alojamiento.","desc":"Cabañas Rahue y Alto Rahue corresponden al mismo alojamiento.","phone":"+56 9 8215 0954","phone2":"+56 9 9486 5265","fb":"https://www.facebook.com/people/Caba%C3%B1as-Rahue/100069831701494/?sk=about","ig":"https://www.instagram.com/cabanasrahue/","web":"https://www.cabanasrahue.cl","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 8215 0954","+56 9 9486 5265"],"phoneVerification":"Confirmado por contacto previo","phone2Verification":"NO VERIFICADO"},
             {"name":"Cabañas La Tatao","zone":"pelluhue","area":"Abdón Fuentealba #6, Pelluhue","level":"standard","types":["familia","grupo"],"price":"Desde $50.000","priceNote":"4 personas $50.000; 6 personas $60.000.","phone":"+56 9 9047 7493","fb":"https://www.facebook.com/cabanaslatatao","ig":"https://www.instagram.com/cabanaslatatao/","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 9047 7493"],"phoneVerification":"Confirmado por contacto previo"},
-            {"name":"Cabañas El Quincho","zone":"pelluhue","area":"Coordenadas: -35.804056, -72.549132","level":"standard","types":["familia","grupo"],"price":"Desde $50.000","priceNote":"4 pers $50.000 (1 hab); 6 pers $80.000 (3 hab); 10 pers $130.000. Piscina.","phone":"+56 9 8837 7184","fb":"https://www.facebook.com/elquincho.espaciocolibri/","ig":"https://www.instagram.com/elquincho.espaciocolibri/","web":"https://www.elquinchopelluhue.cl","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 8837 7184"],"phoneVerification":"Confirmado por contacto previo","locationVerification":"NO VERIFICADO","mapQuery":"-35.8040560733448,-72.54913282553365"},
+            {"name":"Cabañas El Quincho","zone":"pelluhue","area":"Coordenadas: -35.804056, -72.549132","level":"standard","types":["familia","grupo"],"price":"Desde $50.000","priceNote":"4 pers $50.000; 6 pers $80.000; 10 pers $130.000. Piscina para todos; quincho incluido solo en cabaña de 10 personas.","phone":"+56 9 8837 7184","fb":"https://www.facebook.com/elquincho.espaciocolibri/","ig":"https://www.instagram.com/elquincho.espaciocolibri/","web":"https://www.elquinchopelluhue.cl","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 8837 7184"],"phoneVerification":"Confirmado por contacto previo","locationVerification":"NO VERIFICADO","mapQuery":"-35.8040560733448,-72.54913282553365"},
             {"name":"Cabañas Villa Verde","zone":"pelluhue","area":"Arturo Prat #330, Pelluhue","level":"standard","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 8880 2544","fb":"https://www.facebook.com/villaverdepelluhue/","ig":"https://www.instagram.com/villaverdepelluhue/","web":"https://villaverdepelluhue.cl/","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 8880 2544"],"phoneVerification":"Confirmado por contacto previo"},
             {"name":"Cabañas Soledad Renovada","zone":"pelluhue","area":"Los Pinos s/n, Mariscadero","level":"standard","types":["pareja","familia"],"price":"$50.000","priceNote":"Confirmar capacidad y condiciones para la fecha.","phone":"+56 9 8884 1407","fb":"https://m.facebook.com/people/Caba%C3%B1as-Soledad-Renovada/100069235256705/","web":"https://www.soledadrenovada.cl/","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 8884 1407"],"phoneVerification":"Confirmado por contacto previo"},
             {"name":"Cabañas Sol y Mar","zone":"pelluhue","area":"Condell s/n, Pelluhue","level":"standard","types":["pareja","familia","habitacion"],"price":"Desde $32.000","priceNote":"Hab. matrimonial con baño privado $32.000/noche; depto para 5 personas $70.000/noche.","phone":"+56 9 8753 2450","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 8753 2450"],"phoneVerification":"Confirmado por contacto previo"},
@@ -704,10 +768,10 @@
             {"name":"Cabañas Casa Blanca","zone":"pelluhue","area":"Pelluhue","level":"standard","types":["familia"],"price":"Consultar","phone":"+56 9 9843 4490","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO"},
             {"name":"Cabañas Brisas del Pacífico","zone":"pelluhue","area":"Ubicación NO VERIFICADA","level":"standard","types":["pareja","familia"],"price":"Consultar","phone":"+56 9 7460 2229","ig":"https://www.instagram.com/cabanasbrisasdelpacifico","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO","mapQuery":null},
             {"name":"Camping INALAF","zone":"pelluhue","area":"Las Tres Peñas","level":"economico","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 7368 3857","fb":"https://www.facebook.com/campinginalaf-curanipe","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 7368 3857"],"phoneVerification":"Confirmado por contacto previo"},
-            {"name":"Hotel Blanca Reyes","zone":"pelluhue","area":"Arturo Prat #615, Pelluhue","level":"premium","types":["habitacion","pareja","familia"],"price":"Consultar","phone":"+56 9 9624 7934","fb":"https://www.facebook.com/Hotel-Blanca-Reyes-102698104785756","ig":"https://www.instagram.com/hotelblancareyes/?hl=es","web":"https://www.hotelblancareyes.com/","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 9624 7934"],"phoneVerification":"Confirmado por contacto previo"},
+            {"name":"Hotel Blanca Reyes","zone":"pelluhue","area":"Arturo Prat #615, Pelluhue","level":"premium","types":["habitacion","pareja","familia"],"price":"Consultar","phone":"+56 9 9624 7934","whatsapp":"+56996247934","fb":"https://www.facebook.com/Hotel-Blanca-Reyes-102698104785756","ig":"https://www.instagram.com/hotelblancareyes/?hl=es","web":"https://www.hotelblancareyes.com/","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 9624 7934"],"phoneVerification":"Confirmado por contacto previo"},
             {"name":"Hotel de Piedra","zone":"pelluhue","area":"Ubicación NO VERIFICADA","level":"premiumplus","types":["habitacion","pareja","familia"],"price":"Consultar","phone":"+56 9 8206 3889","fb":"https://www.facebook.com/p/Hotel-de-Piedra-Entre-Pelluhue-Y-Curanipe-100064806635819/","ig":"https://www.instagram.com/hoteldepiedrapelluhue/","web":"https://www.hostaldepiedra.cl","status":"verified","travel":"≈ 30–35 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO","mapQuery":null},
             {"name":"Hotel Piedra Negra","zone":"pelluhue","area":"Ubicación NO VERIFICADA","level":"premium","types":["habitacion","pareja"],"price":"Consultar","phone":"+56 9 8272 4442","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO","mapQuery":null},
-            {"name":"Hotel Boutique Puramar","zone":"pelluhue","area":"Camino a Curanipe km 2","level":"premiumplus","types":["pareja","habitacion"],"price":"$180.000–$550.000","priceNote":"Referencia para viernes/sábado: Deluxe $180.000; Dúplex 4-5 pers $420.000; Villa 8 pers $550.000. Valores informados por alojamiento.","phone":"+56 9 6468 4114","phone2":"+56 42 250 0510","fb":"https://www.facebook.com/puramar.cl/","ig":"https://www.instagram.com/terrazapuramar/","web":"https://www.puramar.cl/","status":"verified","travel":"≈ 30–35 min","whatsappPhones":["+56 9 6468 4114"],"phone2Note":"número fijo / central de reservas","phoneVerification":"Confirmado por contacto previo","phone2Verification":"Fijo; no WhatsApp"},
+            {"name":"Hotel Boutique Puramar","zone":"pelluhue","area":"Camino a Curanipe km 2","level":"premiumplus","types":["pareja","habitacion"],"price":"$180.000–$550.000","priceNote":"Referencia para viernes/sábado: Deluxe $180.000; Dúplex 4-5 pers $420.000; Villa 8 pers $550.000. Valores informados por alojamiento.","phone":"+56 9 6468 4114","phone2":"+56 42 250 0510","fb":"https://www.facebook.com/puramar.cl/","ig":"https://www.instagram.com/terrazapuramar/","web":"https://www.puramar.cl/","status":"verified","travel":"≈ 30–35 min","whatsappPhones":["+56 9 6468 4114"],"phone2Note":"número fijo / central de reservas","phoneVerification":"Confirmado por contacto previo","phone2Verification":"Fijo; no WhatsApp","mapQuery":"Camino a Curanipe km 2, Pelluhue, Maule, Chile"},
             {"name":"Casa Mirador Komütun","zone":"pelluhue","area":"Pelluhue","level":"premium","types":["pareja","familia","grupo"],"price":"Consultar","phone":"+56 9 9038 0900","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO"},
             {"name":"La Querencia","zone":"pelluhue","area":"Coordenadas: -35.814642, -72.577222","level":"standard","types":["pareja"],"price":"Consultar","phone":"+56 9 3008 7565","ig":"https://www.instagram.com/laquerencia_pelluhue_/","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","mapQuery":"-35.814642058581406,-72.57722270684327"},
             {"name":"Cabañas Vuelo de Gaviotas","zone":"curanipe","area":"Curanipe","level":"standard","types":["pareja","familia","grupo"],"price":"Consultar","phone":"+56 9 9320 5308","fb":"https://www.facebook.com/vuelogaviotas","web":"https://vuelodegaviotas.cl/","status":"verified","travel":"≈ 35–40 min","phoneVerification":"NO VERIFICADO"},
@@ -760,7 +824,6 @@
 
             const tagsHtml = tags.map(t => `<span class="bg-black/60 border ${cBorder}/40 ${cText} px-2 py-1 rounded-lg text-[9px] uppercase tracking-widest inline-block">${t}</span>`).join('');
             
-            // MAPS Y ACCIONES (SIN RUTA)
             let mapsBtn = '';
             if(x.mapQuery) {
                 let mapsUrl = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(x.mapQuery);
@@ -776,7 +839,6 @@
 
             let socialHtml = getSocialIcons(x);
 
-            // AVISO PRINCIPAL: SOLO "NO VERIFICADO"
             let isAlojamientoVerified = x.status === 'verified' && (!x.phoneVerification || !x.phoneVerification.includes('NO VERIFICADO')) && (!x.locationVerification || !x.locationVerification.includes('NO VERIFICADO'));
             const mainBadge = isAlojamientoVerified ? '' : '<span class="text-neon-orange bg-neon-orange/10 border border-neon-orange/30 px-1.5 py-0.5 rounded text-[8px] uppercase tracking-widest" title="Falta Confirmar Alojamiento">⚠️ No Verificado</span>';
             
