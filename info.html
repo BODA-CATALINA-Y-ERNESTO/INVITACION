@@ -526,7 +526,6 @@
             const acompanante = params.get('acompanante');
             const trato = params.get('trato');
 
-            // Extraemos los hijos de la CENA solo para incluirlos en el saludo inicial si los hay
             const h1 = params.get('hijo1'); const h2 = params.get('hijo2'); 
             let kidsCenaList = [];
             [h1, h2].forEach(h => {
@@ -535,7 +534,6 @@
                 }
             });
 
-            // Extraemos a los invitados de FIESTA para generar los botones
             const f1 = params.get('fiesta1'); const f2 = params.get('fiesta2'); const f3 = params.get('fiesta3');
             fiestaList = [];
             [f1, f2, f3].forEach(f => {
@@ -570,7 +568,6 @@
             let isFemale = tratosFemeninos.includes(tratoUpper);
             let isPlural = (acompanante && acompanante.toLowerCase() !== 'nan' && acompanante.trim() !== '') || grupo || kidsCenaList.length > 0;
 
-            // REEMPLAZO DEL SALUDO "HOLA A TODOS" POR EL TRATO
             let prefijo = (tratoRaw && tratoUpper !== 'NAN' && tratoUpper !== '') ? tratoRaw : (isPlural ? 'ESTIMADOS' : (isFemale ? 'ESTIMADA' : 'ESTIMADO'));
             let saludoIntro = `¡${prefijo} <span class="glow-text-cyan">${guestFullName}</span>!`;
             
@@ -586,7 +583,6 @@
                 btnVolver.href = tokenIdGlobal ? `index.html?id=${encodeURIComponent(tokenIdGlobal)}` : 'index.html';
             }
 
-            // CREACIÓN DEL BLOQUE DE FIESTA
             if (fiestaList.length > 0) {
                 document.getElementById('modulo-fiesta-cabros').classList.remove('hidden');
                 const nombresJuntos = formatNamesList(fiestaList);
@@ -607,7 +603,6 @@
                 document.getElementById('lista-cabros-rsvp').innerHTML = htmlBotones;
             }
 
-            // Sincroniza con Excel usando el nombre del titular o familia
             if(mainGuestSearchName) {
                 checkExistingInfoResponse(mainGuestSearchName);
             }
@@ -624,7 +619,7 @@
                     
                     if (fiestaList.length > 0) {
                         fiestaList.forEach((hijo, index) => {
-                            const val = lastRecord[`Hijo_${index+1}`];
+                            const val = lastRecord[`Confirma_Hijo_${index+1}`];
                             if (val === 'Sí' || val === 'No') {
                                 const kidDiv = document.getElementById('lista-cabros-rsvp').children[index];
                                 if (kidDiv) {
@@ -682,7 +677,7 @@
         function enviarRSVPFiesta() {
             const btn = document.getElementById('btn-enviar-fiesta'); const loader = document.getElementById('loader-fiesta');
             btn.disabled = true; loader.classList.remove('hidden');
-            const payload = { data: [{ "ID_Invitado": tokenIdGlobal, "Nombre": guestFullName, "Hijo_1": fiestaRespuestas['hijo1'] || '', "Hijo_2": fiestaRespuestas['hijo2'] || '', "Hijo_3": fiestaRespuestas['hijo3'] || '', "Camping": campingRespuesta }] };
+            const payload = { data: [{ "ID_Invitado": tokenIdGlobal, "Nombre": guestFullName, "Confirma_Hijo_1": fiestaRespuestas['hijo1'] || '', "Confirma_Hijo_2": fiestaRespuestas['hijo2'] || '', "Confirma_Hijo_3": fiestaRespuestas['hijo3'] || '', "Camping": campingRespuesta }] };
             fetch(SHEETDB_URL, { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json; charset=utf-8' }, body: JSON.stringify(payload) })
             .then(() => { document.getElementById('msg-exito-fiesta').classList.remove('hidden'); setTimeout(() => { document.getElementById('msg-exito-fiesta').classList.add('hidden'); }, 3000); })
             .catch(e => { alert("Error de conexión."); })
@@ -692,7 +687,7 @@
         function enviarRSVPCamping() {
             const btn = document.getElementById('btn-enviar-camping'); const loader = document.getElementById('loader-camping');
             btn.disabled = true; loader.classList.remove('hidden');
-            const payload = { data: [{ "ID_Invitado": tokenIdGlobal, "Nombre": guestFullName, "Hijo_1": fiestaRespuestas['hijo1'] || '', "Hijo_2": fiestaRespuestas['hijo2'] || '', "Hijo_3": fiestaRespuestas['hijo3'] || '', "Camping": campingRespuesta }] };
+            const payload = { data: [{ "ID_Invitado": tokenIdGlobal, "Nombre": guestFullName, "Confirma_Hijo_1": fiestaRespuestas['hijo1'] || '', "Confirma_Hijo_2": fiestaRespuestas['hijo2'] || '', "Confirma_Hijo_3": fiestaRespuestas['hijo3'] || '', "Camping": campingRespuesta }] };
             fetch(SHEETDB_URL, { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json; charset=utf-8' }, body: JSON.stringify(payload) })
             .then(() => { document.getElementById('msg-exito-camping').classList.remove('hidden'); setTimeout(() => { document.getElementById('msg-exito-camping').classList.add('hidden'); }, 3000); })
             .catch(e => { alert("Error de conexión."); })
