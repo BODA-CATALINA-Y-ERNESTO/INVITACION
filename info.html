@@ -102,7 +102,7 @@
                 </button>
                 <div id="content-oficial" class="accordion-content">
                     <div class="glass-card-neon p-6 sm:p-8 rounded-b-3xl border-t-0 border-neon-cyan/50 mt-1 text-center">
-                        <h2 id="mensaje-bienvenida" class="text-lg md:text-xl text-white font-bold mb-4 uppercase glow-text-cyan">¡Hola!</h2>
+                        <h2 id="mensaje-bienvenida" class="text-lg md:text-xl text-white font-bold mb-4 uppercase glow-text-cyan"></h2>
                         <p id="intro-text" class="text-sm md:text-base text-gray-200 leading-relaxed font-mono-code tracking-wide"></p>
                     </div>
 
@@ -570,7 +570,10 @@
             let isFemale = tratosFemeninos.includes(tratoUpper);
             let isPlural = (acompanante && acompanante.toLowerCase() !== 'nan' && acompanante.trim() !== '') || grupo || kidsCenaList.length > 0;
 
-            let saludoIntro = isPlural ? `¡Hola a todos, <span class="glow-text-cyan">${guestFullName}</span>!` : `¡Hola <span class="glow-text-cyan">${guestFullName}</span>!`;
+            // REEMPLAZO DEL SALUDO "HOLA A TODOS" POR EL TRATO
+            let prefijo = (tratoRaw && tratoUpper !== 'NAN' && tratoUpper !== '') ? tratoRaw : (isPlural ? 'ESTIMADOS' : (isFemale ? 'ESTIMADA' : 'ESTIMADO'));
+            let saludoIntro = `¡${prefijo} <span class="glow-text-cyan">${guestFullName}</span>!`;
+            
             document.getElementById('mensaje-bienvenida').innerHTML = saludoIntro; 
             
             let introText = isPlural ?
@@ -716,7 +719,6 @@
             });
         }
 
-        // LA BASE DE DATOS DE ALOJAMIENTOS QUEDA ACÁ ABAJO EXACTAMENTE IGUAL QUE ANTES...
         const stays = [
             {"name":"Hospedaje Costa Verde","zone":"chanco","area":"Abdón Fuentealba 592, Chanco, Maule","level":"economico","types":["habitacion","pareja"],"price":"Desde $15.000","phone":"+56 9 8274 1219","status":"verified","source":"Turismo Chanco 06/10/2025 (guía oficial)","travel":"≈ 15–20 min","whatsappPhones":["+56 9 8274 1219"],"phoneVerification":"Confirmado por contacto previo","mapQuery":"Abdón Fuentealba 592, Chanco, Maule, Chile"},
             {"name":"Departamento Interior Lucía Vega","zone":"chanco","area":"Av. Errázuriz 268, Chanco, Maule","level":"standard","types":["familia","grupo"],"price":"$45.000 por noche","priceNote":"2 dormitorios: 1 cama de 2 plazas; 1 cama de 1½ plaza; 1 sofá cama.","desc":"Departamento interior en sector céntrico de Chanco.","status":"confirm","travel":"≈ 15–20 min","mapQuery":"Av. Errázuriz 268, Chanco, Maule, Chile"},
