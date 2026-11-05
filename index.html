@@ -258,6 +258,7 @@
                             </a>
                         </div>
 
+                        <!-- VISTA DE "NO ASISTE" -->
                         <div id="noAttendanceMsg" class="hidden p-4 rounded-xl bg-orange-950/40 border border-neon-orange/40 w-full space-y-3">
                             <p class="text-xs text-gray-200 font-mono-code leading-relaxed uppercase">
                                 Agradecemos enormemente que te hayas tomado el tiempo de contestar. Lamentamos que no nos puedas acompañar 😔 ¡Te enviamos un abrazo gigante!
@@ -268,7 +269,7 @@
                             </div>
                         </div>
 
-                        <!-- Botones de Acción -->
+                        <!-- Botones de Acción (Modificar y Resetear) -->
                         <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4 border-t border-orange-900/30 w-full mt-2">
                             <button type="button" id="btnCambiarRespuesta" onclick="editResponse()" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-orange-950/60 border border-neon-orange/50 text-neon-orange font-mono-code text-[10px] sm:text-xs uppercase tracking-wider hover:bg-neon-orange hover:text-black transition-all">
                                 ✏️ Cambiar mi respuesta
@@ -295,8 +296,12 @@
     <script>
         lucide.createIcons();
 
-        let guestFullName = ""; let guestCompanion = ""; let hasCompanion = false;
-        let kidsList = []; let fiestaList = []; let allGuestsList = [];
+        let guestFullName = "";
+        let guestCompanion = "";
+        let hasCompanion = false;
+        let kidsList = [];
+        let fiestaList = [];
+        let allGuestsList = [];
         let globalResolvedParams = new URLSearchParams();
 
         function formatNamesList(arr) {
@@ -310,200 +315,387 @@
         if (isTouchDevice) {
             const glowElements = document.querySelectorAll('.scroll-glow-item, .glow-hover-orange, .glow-hover-cyan, .glow-hover-green, .glow-hover-magenta');
             const observerOptions = { root: null, rootMargin: '-10% 0px -10% 0px', threshold: 0.15 };
-            const scrollObserver = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); else entry.target.classList.remove('active'); }); }, observerOptions);
+            const scrollObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('active');
+                    else entry.target.classList.remove('active');
+                });
+            }, observerOptions);
             glowElements.forEach(el => scrollObserver.observe(el));
         } else {
             const cards = document.querySelectorAll('.scroll-glow-item');
-            const cardObserver = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); }); }, { root: null, rootMargin: '0px', threshold: 0.1 });
+            const cardObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('active');
+                });
+            }, { root: null, rootMargin: '0px', threshold: 0.1 });
             cards.forEach(c => cardObserver.observe(c));
         }
 
-        const audioEl = document.getElementById('bgAudio'); const playBtn = document.getElementById('playBtn'); const statusText = document.getElementById('audioStatusText'); const volumeSlider = document.getElementById('volumeSlider'); const vuBars = document.querySelectorAll('.vumeter-bar');
-        let isPlaying = false; let audioCtx = null; let analyser = null; let source = null; let dataArray = null; audioEl.volume = volumeSlider.value;
+        const audioEl = document.getElementById('bgAudio');
+        const playBtn = document.getElementById('playBtn');
+        const statusText = document.getElementById('audioStatusText');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const vuBars = document.querySelectorAll('.vumeter-bar');
+        
+        let isPlaying = false;
+        let audioCtx = null;
+        let analyser = null;
+        let source = null;
+        let dataArray = null;
+
+        audioEl.volume = volumeSlider.value;
+
         function setupAudioContext() {
             if (!audioCtx) {
-                const AudioContext = window.AudioContext || window.webkitAudioContext; audioCtx = new AudioContext(); analyser = audioCtx.createAnalyser(); analyser.fftSize = 512; analyser.minDecibels = -85; analyser.maxDecibels = -15; analyser.smoothingTimeConstant = 0.65; source = audioCtx.createMediaElementSource(audioEl); source.connect(analyser); analyser.connect(audioCtx.destination); dataArray = new Uint8Array(analyser.frequencyBinCount);
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 512;
+                analyser.minDecibels = -85;
+                analyser.maxDecibels = -15;
+                analyser.smoothingTimeConstant = 0.65;
+                source = audioCtx.createMediaElementSource(audioEl);
+                source.connect(analyser);
+                analyser.connect(audioCtx.destination);
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
             }
         }
 
         const barHeights = new Array(16).fill(4);
+
         function renderVuMeter() {
             if (isPlaying && analyser) {
-                requestAnimationFrame(renderVuMeter); analyser.getByteFrequencyData(dataArray);
-                const binIndices = [2, 4, 7, 11, 16, 23, 32, 43, 56, 72, 90, 112, 138, 168, 202, 240]; const gains = [0.95, 0.95, 0.95, 1.0, 1.05, 1.1, 1.15, 1.2, 1.25, 1.3, 1.35, 1.4, 1.45, 1.5, 1.55, 1.6];
+                requestAnimationFrame(renderVuMeter);
+                analyser.getByteFrequencyData(dataArray);
+                const binIndices = [2, 4, 7, 11, 16, 23, 32, 43, 56, 72, 90, 112, 138, 168, 202, 240];
+                const gains = [0.95, 0.95, 0.95, 1.0, 1.05, 1.1, 1.15, 1.2, 1.25, 1.3, 1.35, 1.4, 1.45, 1.5, 1.55, 1.6];
                 vuBars.forEach((bar, i) => {
-                    const bin = binIndices[i] || i; let raw = (dataArray[bin] || 0) * gains[i]; let normalized = Math.min(1.0, raw / 255.0); let curved = Math.pow(normalized, 1.75); let targetHeight = Math.max(4, Math.min(26, Math.floor(curved * 22) + 4));
-                    if (targetHeight > barHeights[i]) barHeights[i] = targetHeight; else barHeights[i] = Math.max(4, barHeights[i] - 1.8);
+                    const bin = binIndices[i] || i;
+                    let raw = (dataArray[bin] || 0) * gains[i];
+                    let normalized = Math.min(1.0, raw / 255.0);
+                    let curved = Math.pow(normalized, 1.75);
+                    let targetHeight = Math.max(4, Math.min(26, Math.floor(curved * 22) + 4));
+                    if (targetHeight > barHeights[i]) barHeights[i] = targetHeight;
+                    else barHeights[i] = Math.max(4, barHeights[i] - 1.8);
                     bar.style.height = barHeights[i].toFixed(1) + 'px';
                 });
-            } else { vuBars.forEach((bar, i) => { barHeights[i] = 4; bar.style.height = '4px'; }); }
+            } else {
+                vuBars.forEach((bar, i) => { barHeights[i] = 4; bar.style.height = '4px'; });
+            }
         }
 
         function toggleAudio() {
-            try { setupAudioContext(); if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume(); } catch (e) { console.log(e); }
-            if (isPlaying) { audioEl.pause(); playBtn.textContent = "▶"; statusText.textContent = "Soundtrack"; isPlaying = false; } 
-            else { audioEl.play().then(() => { playBtn.textContent = "⏸"; statusText.textContent = "Sonando"; isPlaying = true; renderVuMeter(); }).catch(e => console.log(e)); }
+            try {
+                setupAudioContext();
+                if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            } catch (e) { console.log(e); }
+            if (isPlaying) {
+                audioEl.pause();
+                playBtn.textContent = "▶";
+                statusText.textContent = "Soundtrack";
+                isPlaying = false;
+            } else {
+                audioEl.play().then(() => {
+                    playBtn.textContent = "⏸";
+                    statusText.textContent = "Sonando";
+                    isPlaying = true;
+                    renderVuMeter();
+                }).catch(e => console.log(e));
+            }
         }
         function adjustVolume(val) { audioEl.volume = val; }
 
         function decodificarToken(token) {
             let base64 = token.replace(/-/g, '+').replace(/_/g, '/');
             while (base64.length % 4) { base64 += '='; }
-            const binStr = atob(base64); const bytes = new Uint8Array(binStr.length);
-            for (let i = 0; i < binStr.length; i++) { bytes[i] = binStr.charCodeAt(i); }
+            const binStr = atob(base64);
+            const bytes = new Uint8Array(binStr.length);
+            for (let i = 0; i < binStr.length; i++) {
+                bytes[i] = binStr.charCodeAt(i);
+            }
             return new TextDecoder('utf-8').decode(bytes);
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            const rawSearch = window.location.search; const urlParams = new URLSearchParams(rawSearch);
-            let params = urlParams; const tokenId = urlParams.get('id');
+            const rawSearch = window.location.search;
+            const urlParams = new URLSearchParams(rawSearch);
+            let params = urlParams;
+            const tokenId = urlParams.get('id');
 
             if (tokenId) {
                 try {
-                    const decoded = decodificarToken(tokenId); params = new URLSearchParams(decoded);
-                    if (window.history && window.history.replaceState) { window.history.replaceState(null, document.title, window.location.pathname); }
+                    const decoded = decodificarToken(tokenId);
+                    params = new URLSearchParams(decoded);
+                    if (window.history && window.history.replaceState) {
+                        window.history.replaceState(null, document.title, window.location.pathname);
+                    }
                 } catch (err) { console.error("Error al desempaquetar la invitación:", err); }
             }
 
             globalResolvedParams = params;
 
-            const invitado = params.get('invitado'); const acompanante = params.get('acompanante'); const trato = params.get('trato'); const grupo = params.get('grupo');
+            const invitado = params.get('invitado');
+            const acompanante = params.get('acompanante');
+            const trato = params.get('trato');
+            const grupo = params.get('grupo');
 
-            const h1 = params.get('hijo1'); const h2 = params.get('hijo2'); kidsList = [];
-            [h1, h2].forEach(h => { if (h && h.toLowerCase() !== 'nan' && h.trim() !== '' && h.toLowerCase() !== 'no') { kidsList.push(decodeURIComponent(h).trim().toUpperCase()); } });
+            const h1 = params.get('hijo1');
+            const h2 = params.get('hijo2');
+            kidsList = [];
+            [h1, h2].forEach(h => {
+                if (h && h.toLowerCase() !== 'nan' && h.trim() !== '' && h.toLowerCase() !== 'no') {
+                    kidsList.push(decodeURIComponent(h).trim().toUpperCase());
+                }
+            });
 
-            const f1 = params.get('fiesta1'); const f2 = params.get('fiesta2'); const f3 = params.get('fiesta3'); fiestaList = [];
-            [f1, f2, f3].forEach(f => { if (f && f.toLowerCase() !== 'nan' && f.trim() !== '' && f.toLowerCase() !== 'no') { fiestaList.push(decodeURIComponent(f).trim().toUpperCase()); } });
+            const f1 = params.get('fiesta1');
+            const f2 = params.get('fiesta2');
+            const f3 = params.get('fiesta3');
+            fiestaList = [];
+            [f1, f2, f3].forEach(f => {
+                if (f && f.toLowerCase() !== 'nan' && f.trim() !== '' && f.toLowerCase() !== 'no') {
+                    fiestaList.push(decodeURIComponent(f).trim().toUpperCase());
+                }
+            });
 
-            const idVal = params.get('id') || tokenId || ''; const nVal = params.get('invitado') || params.get('n') || ''; const hVal = kidsList.join(',');
+            const idVal = params.get('id') || tokenId || '';
+            const nVal = params.get('invitado') || params.get('n') || '';
+            const hVal = kidsList.join(',');
             const infoQueryStr = `?id=${encodeURIComponent(idVal)}&n=${encodeURIComponent(nVal)}&hijos=${encodeURIComponent(hVal)}`;
             
-            // EL BOTÓN DEL INDEX AHORA APUNTA A info.html
             const btnTicketInfo = document.getElementById('btnTicketInfo');
             if (btnTicketInfo) btnTicketInfo.href = `info.html${infoQueryStr}`;
 
-            const fiestaSection = document.getElementById('fiestaSection'); const fiestaListContainer = document.getElementById('fiestaListContainer');
+            const fiestaSection = document.getElementById('fiestaSection');
+            const fiestaListContainer = document.getElementById('fiestaListContainer');
             if (fiestaList.length > 0) {
-                fiestaSection.classList.remove('hidden'); fiestaListContainer.innerHTML = '';
+                fiestaSection.classList.remove('hidden');
+                fiestaListContainer.innerHTML = '';
                 fiestaList.forEach((fName, idx) => {
-                    const rowDiv = document.createElement('div'); rowDiv.className = 'flex items-center justify-between p-2.5 rounded-xl bg-black/50 border border-magenta-800/50';
-                    rowDiv.innerHTML = `<span class="text-white font-bold">🕺 ${fName}</span><select id="fiestaAttend_${idx}" class="px-3 py-1.5 rounded-lg bg-[#1f060f] border border-magenta-700/60 text-neon-magenta text-xs focus:outline-none focus:border-neon-magenta font-bold"><option value="SI">Asiste a la Fiesta ✅</option><option value="NO">No Asiste ❌</option></select>`;
+                    const rowDiv = document.createElement('div');
+                    rowDiv.className = 'flex items-center justify-between p-2.5 rounded-xl bg-black/50 border border-magenta-800/50';
+                    rowDiv.innerHTML = `
+                        <span class="text-white font-bold">🕺 ${fName}</span>
+                        <select id="fiestaAttend_${idx}" class="px-3 py-1.5 rounded-lg bg-[#1f060f] border border-magenta-700/60 text-neon-magenta text-xs focus:outline-none focus:border-neon-magenta font-bold">
+                            <option value="SI">Asiste a la Fiesta ✅</option>
+                            <option value="NO">No Asiste ❌</option>
+                        </select>
+                    `;
                     fiestaListContainer.appendChild(rowDiv);
                 });
-            } else { fiestaSection.classList.add('hidden'); }
+            } else {
+                fiestaSection.classList.add('hidden');
+            }
 
-            const greetingEl = document.getElementById('guestGreeting'); const verboSpan = document.getElementById('verboUnion'); const labelMsg = document.querySelector('#messageSection label');
+            const greetingEl = document.getElementById('guestGreeting');
+            const verboSpan = document.getElementById('verboUnion');
+            const labelMsg = document.querySelector('#messageSection label');
 
-            let tratoRaw = trato ? decodeURIComponent(trato).trim() : ''; let tratoUpper = tratoRaw.toUpperCase();
+            let tratoRaw = trato ? decodeURIComponent(trato).trim() : '';
+            let tratoUpper = tratoRaw.toUpperCase();
             const tratosFemeninos = ['HERMANA', 'PRIMA', 'TIA', 'TÍA', 'ABUELITA', 'AMIGA', 'MAMA', 'MAMÁ', 'MADRE', 'SOBRINA', 'CRA', 'REINA', 'BEBE', 'AMADA'];
             let isFemale = tratosFemeninos.includes(tratoUpper);
 
-            const attendanceSelect = document.getElementById('attendanceOption'); allGuestsList = []; let nameForSearch = "";
+            const attendanceSelect = document.getElementById('attendanceOption');
+            allGuestsList = [];
+            let nameForSearch = "";
 
             if (grupo) {
-                guestFullName = decodeURIComponent(grupo).toUpperCase(); nameForSearch = `FAMILIA ${guestFullName}`;
+                guestFullName = decodeURIComponent(grupo).toUpperCase();
+                nameForSearch = `FAMILIA ${guestFullName}`;
                 let saludoGrupo = tratoRaw && tratoUpper !== 'NAN' ? tratoUpper : `FAMILIA ${guestFullName}`;
                 if (greetingEl) greetingEl.innerHTML = `¡${saludoGrupo}!<br>ESTÁN INVITADOS AL RITUAL DE UNIÓN DE`;
                 if (verboSpan) verboSpan.textContent = "SEAN";
                 if (labelMsg) labelMsg.textContent = "¿Quieren dejarle un mensaje a los novios?";
                 document.getElementById('guestBadge').textContent = `Grupo Familiar: ${guestFullName}`;
-                attendanceSelect.innerHTML = `<option value="" disabled selected>-- Selecciona una opción --</option><option value="todos">¡Sí, asistirá todo el grupo familiar!</option><option value="ninguno">Lamentablemente no podremos asistir</option>`;
+                attendanceSelect.innerHTML = `
+                    <option value="" disabled selected>-- Selecciona una opción --</option>
+                    <option value="todos">¡Sí, asistirá todo el grupo familiar!</option>
+                    <option value="ninguno">Lamentablemente no podremos asistir</option>
+                `;
             } else if (invitado) {
-                guestFullName = decodeURIComponent(invitado).toUpperCase(); allGuestsList.push(guestFullName);
+                guestFullName = decodeURIComponent(invitado).toUpperCase();
+                allGuestsList.push(guestFullName);
 
-                if (acompanante && acompanante.toLowerCase() !== 'nan' && acompanante.trim() !== '') { guestCompanion = decodeURIComponent(acompanante).toUpperCase(); hasCompanion = true; allGuestsList.push(guestCompanion); }
+                if (acompanante && acompanante.toLowerCase() !== 'nan' && acompanante.trim() !== '') {
+                    guestCompanion = decodeURIComponent(acompanante).toUpperCase();
+                    hasCompanion = true;
+                    allGuestsList.push(guestCompanion);
+                }
 
-                kidsList.forEach(k => allGuestsList.push(k)); const nombresFormateados = formatNamesList(allGuestsList); nameForSearch = guestFullName; 
+                kidsList.forEach(k => allGuestsList.push(k));
+                const nombresFormateados = formatNamesList(allGuestsList);
+                nameForSearch = guestFullName; // Usamos la base para buscar con comodín
 
                 if (allGuestsList.length > 1) {
                     let prefijo = (tratoRaw && tratoUpper !== 'NAN') ? tratoUpper : 'ESTIMADOS';
                     if (greetingEl) greetingEl.innerHTML = `¡${prefijo} ${nombresFormateados}!<br>ESTÁN INVITADOS AL RITUAL DE UNIÓN DE`;
-                    if (verboSpan) verboSpan.textContent = "SEAN"; if (labelMsg) labelMsg.textContent = "¿Quieren dejarle un mensaje a los novios?";
+                    if (verboSpan) verboSpan.textContent = "SEAN";
+                    if (labelMsg) labelMsg.textContent = "¿Quieren dejarle un mensaje a los novios?";
                 } else {
                     let participio = isFemale ? 'ESTÁS INVITADA' : 'ESTÁS INVITADO';
                     let prefijo = (tratoRaw && tratoUpper !== 'NAN') ? tratoUpper : (isFemale ? 'ESTIMADA' : 'ESTIMADO');
                     if (greetingEl) greetingEl.innerHTML = `¡${prefijo} ${guestFullName}!<br>${participio} AL RITUAL DE UNIÓN DE`;
-                    if (verboSpan) verboSpan.textContent = "SEAS"; if (labelMsg) labelMsg.textContent = "¿Quieres dejarle un mensaje a los novios?";
+                    if (verboSpan) verboSpan.textContent = "SEAS";
+                    if (labelMsg) labelMsg.textContent = "¿Quieres dejarle un mensaje a los novios?";
                 }
 
-                let badgeText = `Invitados: ${nombresFormateados}`; if (fiestaList.length > 0) badgeText += ` (Fiesta: ${fiestaList.join(', ')})`;
+                let badgeText = `Invitados: ${nombresFormateados}`;
+                if (fiestaList.length > 0) badgeText += ` (Fiesta: ${fiestaList.join(', ')})`;
                 document.getElementById('guestBadge').textContent = badgeText;
 
-                if (allGuestsList.length === 2) { attendanceSelect.innerHTML = `<option value="" disabled selected>-- Selecciona una opción --</option><option value="todos">¡Sí, asistiremos los dos!</option><option value="parcial">Asistirá solo uno de nosotros</option><option value="ninguno">Lamentablemente ninguno de los dos podrá asistir</option>`; } 
-                else if (allGuestsList.length > 2) { attendanceSelect.innerHTML = `<option value="" disabled selected>-- Selecciona una opción --</option><option value="todos">¡Sí, asistiremos todos!</option><option value="parcial">Asistiremos, pero no todos</option><option value="ninguno">Lamentablemente nadie podrá asistir</option>`; } 
-                else { attendanceSelect.innerHTML = `<option value="" disabled selected>-- Selecciona una opción --</option><option value="todos">¡Sí, asistiré!</option><option value="ninguno">Lamentablemente no podré asistir</option>`; }
+                if (allGuestsList.length === 2) {
+                    attendanceSelect.innerHTML = `<option value="" disabled selected>-- Selecciona una opción --</option><option value="todos">¡Sí, asistiremos los dos!</option><option value="parcial">Asistirá solo uno de nosotros</option><option value="ninguno">Lamentablemente ninguno de los dos podrá asistir</option>`;
+                } else if (allGuestsList.length > 2) {
+                    attendanceSelect.innerHTML = `<option value="" disabled selected>-- Selecciona una opción --</option><option value="todos">¡Sí, asistiremos todos!</option><option value="parcial">Asistiremos, pero no todos</option><option value="ninguno">Lamentablemente nadie podrá asistir</option>`;
+                } else {
+                    attendanceSelect.innerHTML = `<option value="" disabled selected>-- Selecciona una opción --</option><option value="todos">¡Sí, asistiré!</option><option value="ninguno">Lamentablemente no podré asistir</option>`;
+                }
             } else {
-                guestFullName = "INVITADO GENERAL"; nameForSearch = guestFullName; allGuestsList.push(guestFullName);
+                guestFullName = "INVITADO GENERAL";
+                nameForSearch = guestFullName;
+                allGuestsList.push(guestFullName);
                 let prefijo = (tratoRaw && tratoUpper !== 'NAN') ? tratoUpper : 'ESTIMADO/A INVITADO/A';
                 if (greetingEl) greetingEl.innerHTML = `¡${prefijo}!<br>ESTÁS INVITADO AL RITUAL DE UNIÓN DE`;
-                if (verboSpan) verboSpan.textContent = "SEAS"; if (labelMsg) labelMsg.textContent = "¿Quieres dejarle un mensaje a los novios?";
+                if (verboSpan) verboSpan.textContent = "SEAS";
+                if (labelMsg) labelMsg.textContent = "¿Quieres dejarle un mensaje a los novios?";
                 document.getElementById('guestBadge').textContent = "Invitación General";
                 attendanceSelect.innerHTML = `<option value="" disabled selected>-- Selecciona una opción --</option><option value="todos">¡Sí, asistiré!</option><option value="ninguno">Lamentablemente no podré asistir</option>`;
             }
 
-            renderIndividualMemberSelectors(); toggleAttendanceFields();
+            renderIndividualMemberSelectors();
+            toggleAttendanceFields();
 
-            if (nameForSearch) { checkExistingResponse(nameForSearch); }
+            if (nameForSearch) {
+                checkExistingResponse(nameForSearch);
+            }
         });
 
         async function checkExistingResponse(nameForSearch) {
-            const submitBtn = document.getElementById('submitBtn'); submitBtn.disabled = true; submitBtn.textContent = "Sincronizando estado...";
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Sincronizando estado...";
+
             try {
-                const searchUrl = `https://sheetdb.io/api/v1/hkv8diej2nrg7/search?NOMBRE=${encodeURIComponent(nameForSearch)}&sheet=Respuestas_Web`;
-                const response = await fetch(searchUrl, { headers: { 'Accept': 'application/json', 'Content-Type': 'application/json; charset=utf-8' } });
+                // AQUI ESTA LA MAGIA DEL ASTERISCO (*): Busca coincidencias parciales sin asco.
+                const searchUrl = `https://sheetdb.io/api/v1/hkv8diej2nrg7/search?NOMBRE=*${encodeURIComponent(nameForSearch)}*&sheet=Respuestas_Web&casesensitive=false`;
+                const response = await fetch(searchUrl, {
+                    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json; charset=utf-8' }
+                });
                 const data = await response.json();
+
                 if (data && data.length > 0) {
                     const lastRecord = data[data.length - 1];
+
                     if (lastRecord.ASISTENCIA !== 'PENDIENTE') {
                         const willAttend = lastRecord.ASISTENCIA.includes('SÍ') || (lastRecord.ASISTENCIA.includes('ASISTE') && !lastRecord.ASISTENCIA.includes('NO ASISTEN'));
                         mostrarTicket(lastRecord.NOMBRE, lastRecord.ASISTENCIA, willAttend, lastRecord.PREGUNTA);
                         return; 
                     }
                 }
-            } catch (err) { console.error("Error validando memoria universal:", err); }
-            submitBtn.disabled = false; submitBtn.textContent = "Enviar Confirmación";
+            } catch (err) {
+                console.error("Error validando memoria universal:", err);
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Enviar Confirmación";
         }
 
         function renderIndividualMemberSelectors() {
-            const container = document.getElementById('individualMembersContainer'); container.innerHTML = '';
+            const container = document.getElementById('individualMembersContainer');
+            container.innerHTML = '';
             allGuestsList.forEach((person, idx) => {
-                const row = document.createElement('div'); row.className = 'flex items-center justify-between p-2.5 rounded-xl bg-black/60 border border-orange-700/40 font-mono-code text-xs';
-                row.innerHTML = `<span class="text-white font-bold tracking-tight">👤 ${person}</span><select id="memberAttend_${idx}" onchange="updateFoodSelectorsFromAttendance()" class="px-2.5 py-1.5 rounded-lg bg-[#1f060f] border border-orange-500/60 text-neon-orange text-xs focus:outline-none focus:border-neon-orange font-bold"><option value="SI">Asiste ✅</option><option value="NO">No asiste ❌</option></select>`;
+                const row = document.createElement('div');
+                row.className = 'flex items-center justify-between p-2.5 rounded-xl bg-black/60 border border-orange-700/40 font-mono-code text-xs';
+                row.innerHTML = `
+                    <span class="text-white font-bold tracking-tight">👤 ${person}</span>
+                    <select id="memberAttend_${idx}" onchange="updateFoodSelectorsFromAttendance()" class="px-2.5 py-1.5 rounded-lg bg-[#1f060f] border border-orange-500/60 text-neon-orange text-xs focus:outline-none focus:border-neon-orange font-bold">
+                        <option value="SI">Asiste ✅</option>
+                        <option value="NO">No asiste ❌</option>
+                    </select>
+                `;
                 container.appendChild(row);
             });
         }
 
         function toggleAttendanceFields() {
-            const optionVal = document.getElementById('attendanceOption').value; const conditionalFields = document.getElementById('conditionalFields'); const messageSection = document.getElementById('messageSection'); const guestMessageText = document.getElementById('guestMessage'); const individualSection = document.getElementById('individualSelectorSection');
+            const optionVal = document.getElementById('attendanceOption').value;
+            const conditionalFields = document.getElementById('conditionalFields');
+            const messageSection = document.getElementById('messageSection');
+            const guestMessageText = document.getElementById('guestMessage');
+            const individualSection = document.getElementById('individualSelectorSection');
 
-            if (!optionVal || optionVal === "") { conditionalFields.classList.add('hidden'); messageSection.classList.add('hidden'); individualSection.classList.add('hidden'); } 
-            else if (optionVal === 'ninguno') { conditionalFields.classList.add('hidden'); individualSection.classList.add('hidden'); messageSection.classList.remove('hidden'); } 
-            else if (optionVal === 'parcial') { individualSection.classList.remove('hidden'); conditionalFields.classList.remove('hidden'); messageSection.classList.add('hidden'); guestMessageText.value = ''; updateFoodSelectorsFromAttendance(); } 
-            else { individualSection.classList.add('hidden'); conditionalFields.classList.remove('hidden'); messageSection.classList.add('hidden'); guestMessageText.value = ''; currentDinnerAttendees = [...allGuestsList]; renderFoodSelectors(currentDinnerAttendees); }
+            if (!optionVal || optionVal === "") {
+                conditionalFields.classList.add('hidden');
+                messageSection.classList.add('hidden');
+                individualSection.classList.add('hidden');
+            } else if (optionVal === 'ninguno') {
+                conditionalFields.classList.add('hidden');
+                individualSection.classList.add('hidden');
+                messageSection.classList.remove('hidden');
+            } else if (optionVal === 'parcial') {
+                individualSection.classList.remove('hidden');
+                conditionalFields.classList.remove('hidden');
+                messageSection.classList.add('hidden');
+                guestMessageText.value = '';
+                updateFoodSelectorsFromAttendance();
+            } else {
+                individualSection.classList.add('hidden');
+                conditionalFields.classList.remove('hidden');
+                messageSection.classList.add('hidden');
+                guestMessageText.value = '';
+                currentDinnerAttendees = [...allGuestsList];
+                renderFoodSelectors(currentDinnerAttendees);
+            }
         }
 
         function updateFoodSelectorsFromAttendance() {
             currentDinnerAttendees = [];
-            allGuestsList.forEach((person, idx) => { const sel = document.getElementById(`memberAttend_${idx}`); if (sel && sel.value === 'SI') { currentDinnerAttendees.push(person); } });
+            allGuestsList.forEach((person, idx) => {
+                const sel = document.getElementById(`memberAttend_${idx}`);
+                if (sel && sel.value === 'SI') {
+                    currentDinnerAttendees.push(person);
+                }
+            });
             renderFoodSelectors(currentDinnerAttendees);
         }
 
         function renderFoodSelectors(attendees) {
-            const container = document.getElementById('foodSelectorsContainer'); container.innerHTML = '';
-            if (attendees.length === 0) { container.innerHTML = '<p class="text-xs text-neon-magenta font-mono-code text-center py-2">Debes marcar al menos a un asistente que nos acompañe.</p>'; return; }
+            const container = document.getElementById('foodSelectorsContainer');
+            container.innerHTML = '';
+            if (attendees.length === 0) {
+                container.innerHTML = '<p class="text-xs text-neon-magenta font-mono-code text-center py-2">Debes marcar al menos a un asistente que nos acompañe.</p>';
+                return;
+            }
             attendees.forEach((person, idx) => {
-                const row = document.createElement('div'); row.className = 'p-3 rounded-xl bg-black/50 border border-orange-800/50 space-y-1.5';
-                row.innerHTML = `<label class="block text-xs font-mono-code text-orange-200 uppercase font-bold">🍽️ Preferencia de ${person}:</label><select id="foodPref_${idx}" class="w-full px-3 py-2.5 rounded-lg bg-[#1f060f] border border-orange-700/60 text-white text-xs focus:outline-none focus:border-neon-orange font-bold"><option value="Normal (sin restricciones)">Normal (sin restricciones)</option><option value="Vegetariana">Vegetariana</option><option value="Vegana">Vegana</option></select>`;
+                const row = document.createElement('div');
+                row.className = 'p-3 rounded-xl bg-black/50 border border-orange-800/50 space-y-1.5';
+                row.innerHTML = `
+                    <label class="block text-xs font-mono-code text-orange-200 uppercase font-bold">🍽️ Preferencia de ${person}:</label>
+                    <select id="foodPref_${idx}" class="w-full px-3 py-2.5 rounded-lg bg-[#1f060f] border border-orange-700/60 text-white text-xs focus:outline-none focus:border-neon-orange font-bold">
+                        <option value="Normal (sin restricciones)">Normal (sin restricciones)</option>
+                        <option value="Vegetariana">Vegetariana</option>
+                        <option value="Vegana">Vegana</option>
+                    </select>
+                `;
                 container.appendChild(row);
             });
         }
 
         function updateCountdown() {
-            const targetDate = new Date(2027, 0, 16, 16, 0, 0).getTime(); const now = new Date().getTime(); const diff = targetDate - now;
+            const targetDate = new Date(2027, 0, 16, 16, 0, 0).getTime();
+            const now = new Date().getTime();
+            const diff = targetDate - now;
             if (diff > 0) {
-                const d = Math.floor(diff / (1000 * 60 * 60 * 24)); const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)); const s = Math.floor((diff % (1000 * 60)) / 1000);
-                const elD = document.getElementById('cd-days'); const elH = document.getElementById('cd-hours'); const elM = document.getElementById('cd-minutes'); const elS = document.getElementById('cd-seconds');
-                if (elD) elD.textContent = String(d).padStart(2, '0'); if (elH) elH.textContent = String(h).padStart(2, '0'); if (elM) elM.textContent = String(m).padStart(2, '0'); if (elS) elS.textContent = String(s).padStart(2, '0');
+                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((diff % (1000 * 60)) / 1000);
+                const elD = document.getElementById('cd-days'); const elH = document.getElementById('cd-hours');
+                const elM = document.getElementById('cd-minutes'); const elS = document.getElementById('cd-seconds');
+                if (elD) elD.textContent = String(d).padStart(2, '0'); if (elH) elH.textContent = String(h).padStart(2, '0');
+                if (elM) elM.textContent = String(m).padStart(2, '0'); if (elS) elS.textContent = String(s).padStart(2, '0');
             }
         }
         updateCountdown(); setInterval(updateCountdown, 1000);
@@ -512,7 +704,11 @@
         function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; } window.addEventListener('resize', resizeCanvas); resizeCanvas();
         class Particle {
             constructor() { this.reset(); }
-            reset() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 3.5 + 1; this.speedX = (Math.random() - 0.5) * 0.4; this.speedY = (Math.random() - 0.5) * 0.4 - 0.2; this.alpha = Math.random() * 0.85 + 0.2; const colors = ['#00f3ff', '#39ff14', '#ff007f', '#ff5e00', '#b026ff']; this.color = colors[Math.floor(Math.random() * colors.length)]; }
+            reset() {
+                this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 3.5 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.4; this.speedY = (Math.random() - 0.5) * 0.4 - 0.2; this.alpha = Math.random() * 0.85 + 0.2;
+                const colors = ['#00f3ff', '#39ff14', '#ff007f', '#ff5e00', '#b026ff']; this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
             update() { this.x += this.speedX; this.y += this.speedY; if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset(); }
             draw() { ctx.save(); ctx.globalAlpha = this.alpha; ctx.shadowBlur = 18; ctx.shadowColor = this.color; ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
         }
@@ -520,12 +716,19 @@
         function animateCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => { p.update(); p.draw(); }); requestAnimationFrame(animateCanvas); } animateCanvas();
 
         async function handleRSVPSubmit(e) {
-            e.preventDefault(); const optionVal = document.getElementById('attendanceOption').value;
+            e.preventDefault();
+            const optionVal = document.getElementById('attendanceOption').value;
             if (!optionVal || optionVal === "") { alert("Por favor selecciona tu opción de asistencia."); return; }
 
-            const submitBtn = document.getElementById('submitBtn'); submitBtn.disabled = true; submitBtn.textContent = "Registrando...";
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Registrando...";
 
-            let asistenciaTexto = ""; let finalNameStr = formatNamesList(allGuestsList); let willAttend = false; let extraInfo = ""; const grupo = globalResolvedParams.get('grupo');
+            let asistenciaTexto = "";
+            let finalNameStr = formatNamesList(allGuestsList);
+            let willAttend = false;
+            let extraInfo = "";
+            const grupo = globalResolvedParams.get('grupo');
 
             if (grupo) {
                 if (optionVal === "todos") { asistenciaTexto = "SÍ ASISTE GRUPO FAMILIAR"; finalNameStr = `FAMILIA ${guestFullName}`; willAttend = true; } 
@@ -533,31 +736,63 @@
             } else {
                 if (optionVal === "todos") {
                     const totalCount = allGuestsList.length > 0 ? allGuestsList.length : 1;
-                    if (allGuestsList.length === 2) asistenciaTexto = `SÍ ASISTEN LOS DOS (2)`; else if (allGuestsList.length > 2) asistenciaTexto = `SÍ ASISTEN TODOS (${totalCount})`; else asistenciaTexto = `SÍ ASISTE (1)`;
+                    if (allGuestsList.length === 2) asistenciaTexto = `SÍ ASISTEN LOS DOS (2)`;
+                    else if (allGuestsList.length > 2) asistenciaTexto = `SÍ ASISTEN TODOS (${totalCount})`;
+                    else asistenciaTexto = `SÍ ASISTE (1)`;
                     willAttend = true;
                 } else if (optionVal === "parcial") {
                     let asistentes = []; let noAsistentes = [];
-                    allGuestsList.forEach((person, idx) => { const sel = document.getElementById(`memberAttend_${idx}`); if (sel && sel.value === 'SI') asistentes.push(person); else noAsistentes.push(person); });
+                    allGuestsList.forEach((person, idx) => {
+                        const sel = document.getElementById(`memberAttend_${idx}`);
+                        if (sel && sel.value === 'SI') asistentes.push(person);
+                        else noAsistentes.push(person);
+                    });
                     if (asistentes.length === 0) { alert("Por favor marca con 'Asiste ✅' a quien nos acompañará."); submitBtn.disabled = false; submitBtn.textContent = "Enviar Confirmación"; return; }
-                    asistenciaTexto = `ASISTEN (${asistentes.length}): ${formatNamesList(asistentes)} (NO ASISTE: ${formatNamesList(noAsistentes)})`; finalNameStr = formatNamesList(asistentes); willAttend = true;
-                } else { asistenciaTexto = "NO ASISTEN (0)"; willAttend = false; }
+                    asistenciaTexto = `ASISTEN (${asistentes.length}): ${formatNamesList(asistentes)} (NO ASISTE: ${formatNamesList(noAsistentes)})`;
+                    finalNameStr = formatNamesList(asistentes);
+                    willAttend = true;
+                } else {
+                    asistenciaTexto = "NO ASISTEN (0)";
+                    willAttend = false;
+                }
             }
 
             if (willAttend) {
-                let menuList = []; currentDinnerAttendees.forEach((person, idx) => { const sel = document.getElementById(`foodPref_${idx}`); const val = sel ? sel.value : 'Normal (sin restricciones)'; menuList.push(`${person}: ${val}`); });
-                const foodSummary = menuList.join(', '); const guestAlergies = document.getElementById('guestAlergies').value.trim() || "Ninguna";
-                let fiestaDetails = []; fiestaList.forEach((fName, idx) => { const sel = document.getElementById(`fiestaAttend_${idx}`); fiestaDetails.push(`${fName}: ${sel && sel.value === 'SI' ? 'Sí' : 'No'}`); });
+                let menuList = [];
+                currentDinnerAttendees.forEach((person, idx) => {
+                    const sel = document.getElementById(`foodPref_${idx}`);
+                    const val = sel ? sel.value : 'Normal (sin restricciones)';
+                    menuList.push(`${person}: ${val}`);
+                });
+                const foodSummary = menuList.join(', ');
+                const guestAlergies = document.getElementById('guestAlergies').value.trim() || "Ninguna";
+
+                let fiestaDetails = [];
+                fiestaList.forEach((fName, idx) => {
+                    const sel = document.getElementById(`fiestaAttend_${idx}`);
+                    fiestaDetails.push(`${fName}: ${sel && sel.value === 'SI' ? 'Sí' : 'No'}`);
+                });
+
                 extraInfo = `Preferencia: [${foodSummary}] | Alergias/Restricciones: ${guestAlergies}`;
                 if (fiestaDetails.length > 0) extraInfo += ` | Fiesta (23:00): [${fiestaDetails.join(', ')}]`;
             } else {
-                const guestMessage = document.getElementById('guestMessage').value.trim() || "Sin mensaje"; extraInfo = `Mensaje: ${guestMessage}`;
+                const guestMessage = document.getElementById('guestMessage').value.trim() || "Sin mensaje";
+                extraInfo = `Mensaje: ${guestMessage}`;
             }
 
             const sheetDbUrl = "https://sheetdb.io/api/v1/hkv8diej2nrg7?sheet=Respuestas_Web"; 
             try {
                 await fetch(sheetDbUrl, {
-                    method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json; charset=utf-8' },
-                    body: JSON.stringify({ data: [{ 'NOMBRE': finalNameStr, 'ASISTENCIA': asistenciaTexto, 'FECHA': new Date().toLocaleString(), 'PREGUNTA': extraInfo }] })
+                    method: 'POST',
+                    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json; charset=utf-8' },
+                    body: JSON.stringify({
+                        data: [{
+                            'NOMBRE': finalNameStr,
+                            'ASISTENCIA': asistenciaTexto,
+                            'FECHA': new Date().toLocaleString(),
+                            'PREGUNTA': extraInfo
+                        }]
+                    })
                 });
             } catch (error) { console.error("Error al enviar a Google Sheets:", error); } 
             finally { submitBtn.disabled = false; submitBtn.textContent = "Enviar Confirmación"; }
@@ -566,50 +801,120 @@
         }
 
         function mostrarTicket(finalNameStr, asistenciaTexto, willAttend, extraInfo) {
-            document.getElementById('rsvpForm').classList.add('hidden'); document.getElementById('ticketResult').classList.remove('hidden'); document.getElementById('ticketGuestName').textContent = finalNameStr;
-            const ticketTitle = document.getElementById('ticketTitle'); const qrSection = document.getElementById('qrSection'); const noAttendanceMsg = document.getElementById('noAttendanceMsg');
-            const isPlural = allGuestsList.length > 1 || globalResolvedParams.get('grupo'); const tratoParam = globalResolvedParams.get('trato');
+            document.getElementById('rsvpForm').classList.add('hidden');
+            document.getElementById('ticketResult').classList.remove('hidden');
+            document.getElementById('ticketGuestName').textContent = finalNameStr;
+
+            const ticketTitle = document.getElementById('ticketTitle');
+            const qrSection = document.getElementById('qrSection');
+            const noAttendanceMsg = document.getElementById('noAttendanceMsg');
+
+            const isPlural = allGuestsList.length > 1 || globalResolvedParams.get('grupo');
+            const tratoParam = globalResolvedParams.get('trato');
             const tratosFemeninos = ['HERMANA', 'PRIMA', 'TIA', 'TÍA', 'ABUELITA', 'AMIGA', 'MAMA', 'MAMÁ', 'MADRE', 'SOBRINA', 'CRA', 'REINA', 'BEBE', 'AMADA'];
             const isFem = tratoParam && tratosFemeninos.includes(decodeURIComponent(tratoParam).trim().toUpperCase());
             const etiquetaInvitado = isPlural ? "Invitados" : (isFem ? "Invitada" : "Invitado");
 
             if (willAttend) {
-                ticketTitle.textContent = "¡Asistencia Registrada!"; qrSection.style.display = "flex"; noAttendanceMsg.style.display = "none";
-                let qrTextoMensaje = "C&E '27 - TICKET DE ACCESO\n--------------------------------\n" + etiquetaInvitado + ": " + finalNameStr + "\nEstado: " + asistenciaTexto + "\nDetalles: " + extraInfo + "\nFecha: 16 Ene 2027\nLugar: Chanco, Región del Maule (Sector Los Peumos)\n\nCariños,\nCata & Ernesto";
-                const qrData = encodeURIComponent(qrTextoMensaje); document.getElementById('qrImage').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${qrData}`;
+                ticketTitle.textContent = "¡Asistencia Registrada!";
+                qrSection.style.display = "flex";
+                noAttendanceMsg.style.display = "none";
+                
+                let qrTextoMensaje = "C&E '27 - TICKET DE ACCESO\n--------------------------------\n" +
+                                     etiquetaInvitado + ": " + finalNameStr + "\n" +
+                                     "Estado: " + asistenciaTexto + "\n" +
+                                     "Detalles: " + extraInfo + "\n" +
+                                     "Fecha: 16 Ene 2027\n" +
+                                     "Lugar: Chanco, Región del Maule (Sector Los Peumos)\n\n" +
+                                     "Cariños,\nCata & Ernesto";
+                
+                const qrData = encodeURIComponent(qrTextoMensaje);
+                document.getElementById('qrImage').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${qrData}`;
             } else {
-                ticketTitle.textContent = "¡Respuesta Registrada!"; qrSection.style.display = "none"; noAttendanceMsg.style.display = "block";
+                ticketTitle.textContent = "¡Respuesta Registrada!";
+                qrSection.style.display = "none";
+                noAttendanceMsg.style.display = "block";
+
                 const msgTextEl = noAttendanceMsg.querySelector('p');
-                if (msgTextEl) { msgTextEl.textContent = isPlural ? "Agradecemos enormemente que se hayan tomado el tiempo de contestar. Lamentamos que no nos puedan acompañar 😔 ¡Les enviamos un abrazo gigante!" : "Agradecemos enormemente que te hayas tomado el tiempo de contestar. Lamentamos que no nos puedas acompañar 😔 ¡Te enviamos un abrazo gigante!"; }
-                const previewContainer = document.getElementById('messagePreviewContainer'); const displayMsg = document.getElementById('displayGuestMessage');
-                if (extraInfo.startsWith("Mensaje: ") && extraInfo !== "Mensaje: Sin mensaje") { displayMsg.textContent = `"${extraInfo.replace("Mensaje: ", "")}"`; previewContainer.style.display = "block"; } 
-                else { previewContainer.style.display = "none"; }
+                if (msgTextEl) {
+                    msgTextEl.textContent = isPlural ? "Agradecemos enormemente que se hayan tomado el tiempo de contestar. Lamentamos que no nos puedan acompañar 😔 ¡Les enviamos un abrazo gigante!" : "Agradecemos enormemente que te hayas tomado el tiempo de contestar. Lamentamos que no nos puedas acompañar 😔 ¡Te enviamos un abrazo gigante!";
+                }
+                
+                const previewContainer = document.getElementById('messagePreviewContainer');
+                const displayMsg = document.getElementById('displayGuestMessage');
+                
+                if (extraInfo.startsWith("Mensaje: ") && extraInfo !== "Mensaje: Sin mensaje") {
+                    displayMsg.textContent = `"${extraInfo.replace("Mensaje: ", "")}"`;
+                    previewContainer.style.display = "block";
+                } else {
+                    previewContainer.style.display = "none";
+                }
             }
         }
 
         async function editResponse() {
             const btnEdit = document.getElementById('btnCambiarRespuesta');
             if (btnEdit) { btnEdit.disabled = true; btnEdit.textContent = "Actualizando a pendiente..."; }
+
             const sheetDbUrl = "https://sheetdb.io/api/v1/hkv8diej2nrg7?sheet=Respuestas_Web";
             const titularName = guestFullName || (allGuestsList.length > 0 ? allGuestsList[0] : "INVITADO GENERAL");
+
             try {
-                await fetch(sheetDbUrl, { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json; charset=utf-8' }, body: JSON.stringify({ data: [{ 'NOMBRE': titularName, 'ASISTENCIA': 'PENDIENTE', 'FECHA': new Date().toLocaleString(), 'PREGUNTA': 'En proceso de cambiar respuesta (Pendiente)' }] }) });
+                await fetch(sheetDbUrl, {
+                    method: 'POST',
+                    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json; charset=utf-8' },
+                    body: JSON.stringify({
+                        data: [{
+                            'NOMBRE': titularName,
+                            'ASISTENCIA': 'PENDIENTE',
+                            'FECHA': new Date().toLocaleString(),
+                            'PREGUNTA': 'En proceso de cambiar respuesta (Pendiente)'
+                        }]
+                    })
+                });
             } catch (err) { console.error("Error al actualizar a pendiente en SheetDB:", err); } 
-            finally { if (btnEdit) { btnEdit.disabled = false; btnEdit.textContent = "✏️ Cambiar mi respuesta"; } }
-            document.getElementById('ticketResult').classList.add('hidden'); document.getElementById('rsvpForm').classList.remove('hidden'); document.getElementById('attendanceOption').value = ""; toggleAttendanceFields();
+            finally {
+                if (btnEdit) { btnEdit.disabled = false; btnEdit.textContent = "✏️ Cambiar mi respuesta"; }
+            }
+
+            document.getElementById('ticketResult').classList.add('hidden');
+            document.getElementById('rsvpForm').classList.remove('hidden');
+            document.getElementById('attendanceOption').value = "";
+            toggleAttendanceFields();
         }
 
         async function resetToPending() {
             if (!confirm("¿Deseas dejar tu respuesta en estado PENDIENTE para confirmar más adelante?")) return;
+
             const btnReset = document.getElementById('btnResetPendiente');
             if (btnReset) { btnReset.disabled = true; btnReset.textContent = "Actualizando..."; }
+
             const sheetDbUrl = "https://sheetdb.io/api/v1/hkv8diej2nrg7?sheet=Respuestas_Web";
             const titularName = guestFullName || (allGuestsList.length > 0 ? allGuestsList[0] : "INVITADO GENERAL");
+
             try {
-                await fetch(sheetDbUrl, { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json; charset=utf-8' }, body: JSON.stringify({ data: [{ 'NOMBRE': titularName, 'ASISTENCIA': 'PENDIENTE', 'FECHA': new Date().toLocaleString(), 'PREGUNTA': 'Respuesta reseteada a PENDIENTE' }] }) });
+                await fetch(sheetDbUrl, {
+                    method: 'POST',
+                    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json; charset=utf-8' },
+                    body: JSON.stringify({
+                        data: [{
+                            'NOMBRE': titularName,
+                            'ASISTENCIA': 'PENDIENTE',
+                            'FECHA': new Date().toLocaleString(),
+                            'PREGUNTA': 'Respuesta reseteada a PENDIENTE'
+                        }]
+                    })
+                });
             } catch (err) { console.error("Error al resetear en SheetDB:", err); } 
-            finally { if (btnReset) { btnReset.disabled = false; btnReset.textContent = "⏳ Dejar en Pendiente"; } }
-            document.getElementById('ticketResult').classList.add('hidden'); document.getElementById('rsvpForm').classList.remove('hidden'); document.getElementById('attendanceOption').value = ""; toggleAttendanceFields(); alert("Tu respuesta ha quedado como PENDIENTE en la lista de invitados.");
+            finally {
+                if (btnReset) { btnReset.disabled = false; btnReset.textContent = "⏳ Dejar en Pendiente"; }
+            }
+
+            document.getElementById('ticketResult').classList.add('hidden');
+            document.getElementById('rsvpForm').classList.remove('hidden');
+            document.getElementById('attendanceOption').value = "";
+            toggleAttendanceFields();
+            alert("Tu respuesta ha quedado como PENDIENTE en la lista de invitados.");
         }
     </script>
 </body>
