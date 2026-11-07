@@ -35,6 +35,14 @@
         .btn-radio-rsvp { transition: all 0.2s ease; cursor: pointer; } .btn-radio-rsvp.selected-yes { background-color: #39ff14; color: black; box-shadow: 0 0 15px #39ff14; border-color: #39ff14; } .btn-radio-rsvp.selected-no { background-color: #ff003c; color: white; box-shadow: 0 0 15px #ff003c; border-color: #ff003c; }
         .loader { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid #00f3ff; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; } @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .filter-btn { opacity: 0.5; transition: all 0.3s ease; } .filter-btn.active { opacity: 1; box-shadow: 0 0 10px currentColor; } .nav-link { transition: all 0.2s ease; } .nav-link:hover { transform: translateY(-2px); filter: drop-shadow(0 0 8px currentColor); color: white; }
+        
+        /* FIX LEAFLET DARK MODE (NO API KEY REQUIRED) */
+        .leaflet-layer,
+        .leaflet-control-zoom-in,
+        .leaflet-control-zoom-out,
+        .leaflet-control-attribution {
+          filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+        }
     </style>
 </head>
 <body class="selection:bg-neon-orange selection:text-black relative w-full overflow-x-hidden">
@@ -718,8 +726,9 @@
         function initLeafletMap() {
             if (mapGeneral) return;
             mapGeneral = L.map('map-container').setView([-35.80, -72.58], 11);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                attribution: '© OpenStreetMap contributors',
+            // OpenStreetMap libre
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap',
                 maxZoom: 18
             }).addTo(mapGeneral);
 
@@ -729,7 +738,6 @@
                     const match = x.mapQuery.match(/(-35\.\d+),\s*(-72\.\d+)/);
                     if (match) coords = [parseFloat(match[1]), parseFloat(match[2])];
                 }
-                // Como quitamos las coordenadas visuales del field 'area', ahora las saca puramente del mapQuery o link oficial.
                 if (coords) {
                     const marker = L.circleMarker(coords, { radius: 7, fillColor: "#00f3ff", color: "#ffffff", weight: 2, opacity: 1, fillOpacity: 0.9 }).addTo(mapGeneral);
                     marker.bindPopup(`<div style="font-family: 'Plus Jakarta Sans', sans-serif; text-align: center; color: black; padding: 4px;"><strong style="font-size: 13px; text-transform: uppercase;">${x.name}</strong><br><span style="font-size: 10px; color: #555;">📍 ${x.zone.toUpperCase()}</span></div>`);
@@ -782,15 +790,15 @@
             {"name":"Cabañas Bora Bora","zone":"chanco","area":"Caleta Loanco","level":"standard","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 7968 2923","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO"},
             {"name":"Cabañas Mirador Santos del Mar","zone":"chanco","area":"Chanco","level":"standard","types":["pareja","familia"],"price":"Consultar","priceNote":"Aún no hay tarifario de verano.","phone":"+56 9 5694 0021","status":"verified","travel":"≈ 25–30 min","phoneVerification":"Confirmado por contacto previo","mapQuery":"-35.58377,-72.62161"},
             {"name":"Cabañas Lomas del Cacique","zone":"chanco","area":"Caleta Loanco","level":"standard","types":["pareja","familia","grupo"],"price":"Consultar","phone":"+56 9 3375 4028","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 3375 4028"],"phoneVerification":"Confirmado por contacto previo"},
-            {"name":"Cabañas Luz del Faro","zone":"chanco","area":"Faro Cabo Carranza, Constitución","level":"standard","types":["pareja","familia"],"price":"Consultar","phone":"+56 9 8226 6166","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
-            {"name":"Cabañas JS","zone":"chanco","area":"Chanco","level":"standard","types":["familia","grupo"],"price":"Desde $40.000","priceNote":"Capacidad para 4, 5 y 8 personas.","desc":"Tengo para 4, 5 y 8 personas.","phone":"+56 9 8202 6355","status":"verified","travel":"≈ 15–20 min","whatsappPhones":["+56 9 8202 6355"],"phoneVerification":"Confirmado por contacto previo","locationVerification":"NO VERIFICADO"},
-            {"name":"Cabañas Don Willy","zone":"chanco","area":"Chanco","level":"standard","types":["familia","grupo"],"price":"$40.000","priceNote":"Para 5 personas por noche. Tinaja $30.000 por día, uso ilimitado.","desc":"Cabaña para 5 personas con tinaja opcional.","phone":"+56 9 7670 8488","status":"verified","travel":"≈ 20–25 min","whatsappPhones":["+56 9 7670 8488"],"phoneVerification":"Confirmado por contacto previo","locationVerification":"NO VERIFICADO"},
-            {"name":"Cabañas Altos de Polhuín","zone":"chanco","area":"Chanco","level":"standard","types":["pareja","familia","grupo"],"price":"Consultar","phone":"+56 9 5698 2336","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
-            {"name":"Refugio Costero — Reloca Alto","zone":"chanco","area":"Reloca Alto, Chanco","level":"standard","types":["pareja","familia"],"price":"Consultar","phone":"+56 9 4255 8721","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
-            {"name":"Cabañas Mar & Ser","zone":"chanco","area":"Chanco","level":"standard","types":["pareja","familia"],"price":"$50.000","priceNote":"Para 6 personas. 3 cabañas. Tinaja $35.000 por día.","desc":"3 cabañas; capacidad para 6 personas; tinaja con costo adicional.","phone":"+56 9 8268 7435","status":"verified","travel":"≈ 20–25 min","whatsappPhones":["+56 9 8268 7435"],"phoneVerification":"Confirmado por contacto previo","locationVerification":"NO VERIFICADO"},
-            {"name":"Cabañas Casas Negras","zone":"chanco","area":"Chanco","level":"standard","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 5102 0274","status":"verified","travel":"≈ 20–25 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
+            {"name":"Cabañas Luz del Faro","zone":"chanco","area":"Faro Cabo Carranza, Constitución — NO VERIFICADO","level":"standard","types":["pareja","familia"],"price":"Consultar","phone":"+56 9 8226 6166","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
+            {"name":"Cabañas JS","zone":"chanco","area":"Ubicación NO VERIFICADA","level":"standard","types":["familia","grupo"],"price":"Desde $40.000","priceNote":"Capacidad para 4, 5 y 8 personas.","desc":"Tengo para 4, 5 y 8 personas.","phone":"+56 9 8202 6355","status":"verified","travel":"≈ 15–20 min","whatsappPhones":["+56 9 8202 6355"],"phoneVerification":"Confirmado por contacto previo","locationVerification":"NO VERIFICADO"},
+            {"name":"Cabañas Don Willy","zone":"chanco","area":"Ubicación NO VERIFICADA","level":"standard","types":["familia","grupo"],"price":"$40.000","priceNote":"Para 5 personas por noche. Tinaja $30.000 por día, uso ilimitado.","desc":"Cabaña para 5 personas con tinaja opcional.","phone":"+56 9 7670 8488","status":"verified","travel":"≈ 20–25 min","whatsappPhones":["+56 9 7670 8488"],"phoneVerification":"Confirmado por contacto previo","locationVerification":"NO VERIFICADO"},
+            {"name":"Cabañas Altos de Polhuín","zone":"chanco","area":"Ubicación NO VERIFICADA","level":"standard","types":["pareja","familia","grupo"],"price":"Consultar","phone":"+56 9 5698 2336","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
+            {"name":"Refugio Costero — Reloca Alto","zone":"chanco","area":"Ubicación NO VERIFICADA","level":"standard","types":["pareja","familia"],"price":"Consultar","phone":"+56 9 4255 8721","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
+            {"name":"Cabañas Mar & Ser","zone":"chanco","area":"Ubicación NO VERIFICADA","level":"standard","types":["pareja","familia"],"price":"$50.000","priceNote":"Para 6 personas. 3 cabañas. Tinaja $35.000 por día.","desc":"3 cabañas; capacidad para 6 personas; tinaja con costo adicional.","phone":"+56 9 8268 7435","status":"verified","travel":"≈ 20–25 min","whatsappPhones":["+56 9 8268 7435"],"phoneVerification":"Confirmado por contacto previo","locationVerification":"NO VERIFICADO"},
+            {"name":"Cabañas Casas Negras","zone":"chanco","area":"Ubicación NO VERIFICADA","level":"standard","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 5102 0274","status":"verified","travel":"≈ 20–25 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
             {"name":"Glamping Weliwen","zone":"chanco","area":"Chanco","level":"premium","types":["pareja"],"price":"$70.000–$90.000","priceNote":"Valores vistos para pareja; confirmar tarifa exacta según fecha/temporada.","phone":"+56 9 9307 5139","status":"verified","travel":"≈ 15–20 min","whatsappPhones":["+56 9 9307 5139"],"phoneVerification":"Confirmado por contacto previo"},
-            {"name":"Camping y Cabañas Lupita","zone":"chanco","area":"Chanco","level":"economico","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 9415 7611","status":"confirm","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
+            {"name":"Camping y Cabañas Lupita","zone":"chanco","area":"Ubicación NO VERIFICADA","level":"economico","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 9415 7611","status":"confirm","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
             {"name":"A Hotel Boutique Pelluhue","zone":"pelluhue","area":"Condell #951, Pelluhue","level":"premiumplus","types":["pareja","habitacion"],"price":"$154.900","priceNote":"Por día para 2 personas, impuestos incluidos. Incluye desayuno, habitación en suite, calefacción, TV cable, WiFi, estacionamiento y 1 hora de hot tub diario.","desc":"Primera línea frente al mar, vista panorámica y hotel boutique temático.","phone":"+56 9 7798 3319","fb":"https://web.facebook.com/AHOTELBOUTIQUEPELLUHUE","ig":"https://www.instagram.com/a_hotel_boutique_pelluhue/","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 7798 3319"],"phoneVerification":"Confirmado por contacto previo"},
             {"name":"Hotel Puerto Madera","zone":"pelluhue","area":"Abdón Fuentealba #68, Pelluhue","level":"premium","types":["pareja","habitacion","familia"],"price":"Consultar","phone":"+56 9 8418 4490","web":"https://hostalpuertomadera.cl/portal/es-es/2470/inicio","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 8418 4490"],"phoneVerification":"Confirmado por contacto previo"},
             {"name":"Hacienda Ecuestre","zone":"pelluhue","area":"Pelluhue","level":"premiumplus","types":["pareja","familia"],"price":"Consultar","phone":"+56 9 3910 3846","fb":"https://www.facebook.com/haciendaecuestre.haciendaecuestre","ig":"https://www.instagram.com/haciendaecuestrepelluhue","web":"https://haciendaecuestre.cl","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 3910 3846"],"phoneVerification":"Confirmado por contacto previo"},
@@ -803,7 +811,7 @@
             {"name":"Cabañas Sol y Mar","zone":"pelluhue","area":"Condell s/n, Pelluhue","level":"standard","types":["pareja","familia","habitacion"],"price":"Desde $32.000","priceNote":"Hab. matrimonial con baño privado $32.000/noche; depto para 5 personas $70.000/noche.","phone":"+56 9 8753 2450","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 8753 2450"],"phoneVerification":"Confirmado por contacto previo"},
             {"name":"Cabañas Buena Vista","zone":"pelluhue","area":"San Francisco #1227, Pelluhue","level":"standard","types":["pareja","familia","habitacion"],"price":"Consultar","phone":"+56 9 8727 9837","fb":"https://www.facebook.com/cabanasbuenavistapelluhue","ig":"https://www.instagram.com/cabanasbuenavista_pelluhue/","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 8727 9837"],"phoneVerification":"Confirmado por contacto previo"},
             {"name":"Cabañas Mar y Sol","zone":"pelluhue","area":"Los Pinos s/n, Mariscadero","level":"standard","types":["pareja","familia"],"price":"Consultar","phone":"+56 9 9153 3873","fb":"https://www.facebook.com/p/Caba%C3%B1as-Mar-y-Sol-Pelluhue-100067674707588/","ig":"https://www.instagram.com/cabanas_mar_y_sol_pelluhue","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 9153 3873"],"phoneVerification":"Confirmado por contacto previo"},
-            {"name":"Cabañas Mar y Luz","zone":"pelluhue","area":"Calle Las Violetas, Pelluhue","level":"standard","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 5896 6626","fb":"https://www.facebook.com/cabanasmary.luz.pelluhue","ig":"https://www.instagram.com/cabanasmaryluz/","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
+            {"name":"Cabañas Mar y Luz","zone":"pelluhue","area":"Calle Las Violetas, Pelluhue — dirección exacta NO VERIFICADA","level":"standard","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 5896 6626","fb":"https://www.facebook.com/cabanasmary.luz.pelluhue","ig":"https://www.instagram.com/cabanasmaryluz/","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
             {"name":"Cabañas Lomas de Sol","zone":"pelluhue","area":"Sector El Torreón, camino a Curanipe","level":"premium","types":["pareja","familia","grupo"],"price":"Desde $50.000","priceNote":"2 pers $50.000; 4 pers desde $60.000; 6 pers $70.000; 8 pers hasta $120.000.","phone":"+56 9 7668 6728","fb":"https://www.facebook.com/Lomasdesolpelluhue/","web":"https://www.lomasdesolpelluhue.cl/","status":"verified","travel":"≈ 30–35 min","phoneVerification":"NO VERIFICADO"},
             {"name":"Lodge Casa Vieja","zone":"pelluhue","area":"Ruta M80, sector Casas Viejas","level":"premium","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 4464 2767","fb":"https://www.facebook.com/lodgecasavieja/","ig":"https://www.instagram.com/lodgecasavieja1/","web":"https://www.lodgecasavieja.cl","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 4464 2767"],"phoneVerification":"Confirmado por contacto previo"},
             {"name":"Cabañas Peuñomar","zone":"pelluhue","area":"Pelluhue / Curanipe","level":"standard","types":["pareja","familia","grupo"],"price":"Consultar","phone":"+56 9 7968 5604","phone2":"+56 9 8838 6955","status":"verified","travel":"≈ 30–35 min","phoneVerification":"NO VERIFICADO","phone2Verification":"NO VERIFICADO"},
@@ -816,11 +824,11 @@
             {"name":"Residencial El Carmen","zone":"pelluhue","area":"Abdón Fuentealba 310","level":"economico","types":["habitacion","pareja"],"price":"Consultar","phone":"+56 73 250 3215","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO"},
             {"name":"Cabañas Los Puquios","zone":"pelluhue","area":"Mariscadero, Pelluhue","level":"standard","types":["familia","grupo"],"price":"Desde $70.000","priceNote":"4 personas $70.000/noche; 5 personas $80.000/noche.","phone":"+56 9 9998 1772","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 9998 1772"],"phoneVerification":"Confirmado por contacto previo"},
             {"name":"Cabañas Casa Blanca","zone":"pelluhue","area":"Pelluhue","level":"standard","types":["familia"],"price":"Consultar","phone":"+56 9 9843 4490","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO"},
-            {"name":"Cabañas Brisas del Pacífico","zone":"pelluhue","area":"Pelluhue","level":"standard","types":["pareja","familia"],"price":"Consultar","phone":"+56 9 7460 2229","ig":"https://www.instagram.com/cabanasbrisasdelpacifico","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
+            {"name":"Cabañas Brisas del Pacífico","zone":"pelluhue","area":"Ubicación NO VERIFICADA","level":"standard","types":["pareja","familia"],"price":"Consultar","phone":"+56 9 7460 2229","ig":"https://www.instagram.com/cabanasbrisasdelpacifico","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
             {"name":"Camping INALAF","zone":"pelluhue","area":"Las Tres Peñas","level":"economico","types":["familia","grupo"],"price":"Consultar","phone":"+56 9 7368 3857","fb":"https://www.facebook.com/campinginalaf-curanipe","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 7368 3857"],"phoneVerification":"Confirmado por contacto previo"},
             {"name":"Hotel Blanca Reyes","zone":"pelluhue","area":"Arturo Prat #615, Pelluhue","level":"premium","types":["habitacion","pareja","familia"],"price":"Consultar","phone":"+56 9 9624 7934","whatsapp":"+56996247934","fb":"https://www.facebook.com/Hotel-Blanca-Reyes-102698104785756","ig":"https://www.instagram.com/hotelblancareyes/?hl=es","web":"https://www.hotelblancareyes.com/","status":"verified","travel":"≈ 25–30 min","whatsappPhones":["+56 9 9624 7934"],"phoneVerification":"Confirmado por contacto previo"},
-            {"name":"Hotel Casa de Piedra","zone":"pelluhue","area":"Entre Pelluhue y Curanipe","level":"premiumplus","types":["habitacion","pareja","familia"],"price":"Consultar","phone":"+56 9 8206 3889","fb":"https://www.facebook.com/p/Hotel-de-Piedra-Entre-Pelluhue-Y-Curanipe-100064806635819/","ig":"https://www.instagram.com/hoteldepiedrapelluhue/","status":"verified","travel":"≈ 30–35 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
-            {"name":"Hotel Piedra Negra","zone":"pelluhue","area":"Pelluhue","level":"premium","types":["habitacion","pareja"],"price":"Consultar","phone":"+56 9 8272 4442","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
+            {"name":"Hotel Casa de Piedra","zone":"pelluhue","area":"Ubicación NO VERIFICADA","level":"premiumplus","types":["habitacion","pareja","familia"],"price":"Consultar","phone":"+56 9 8206 3889","fb":"https://www.facebook.com/p/Hotel-de-Piedra-Entre-Pelluhue-Y-Curanipe-100064806635819/","ig":"https://www.instagram.com/hoteldepiedrapelluhue/","status":"verified","travel":"≈ 30–35 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
+            {"name":"Hotel Piedra Negra","zone":"pelluhue","area":"Ubicación NO VERIFICADA","level":"premium","types":["habitacion","pareja"],"price":"Consultar","phone":"+56 9 8272 4442","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","locationVerification":"NO VERIFICADO"},
             {"name":"Hotel Boutique Puramar","zone":"pelluhue","area":"Camino a Curanipe km 2","level":"premiumplus","types":["pareja","habitacion"],"price":"$180.000–$550.000","priceNote":"Referencia para viernes/sábado: Deluxe $180.000; Dúplex 4-5 pers $420.000; Villa 8 pers $550.000. Valores informados por alojamiento.","phone":"+56 9 6468 4114","phone2":"+56 42 250 0510","fb":"https://www.facebook.com/puramar.cl/","ig":"https://www.instagram.com/terrazapuramar/","web":"https://www.puramar.cl/","status":"verified","travel":"≈ 30–35 min","whatsappPhones":["+56 9 6468 4114"],"phone2Note":"número fijo / central de reservas","phoneVerification":"Confirmado por contacto previo","phone2Verification":"Fijo; no WhatsApp","mapQuery":"Camino a Curanipe km 2, Pelluhue, Maule, Chile"},
             {"name":"Casa Mirador Komütun","zone":"pelluhue","area":"Pelluhue","level":"premium","types":["pareja","familia","grupo"],"price":"Consultar","phone":"+56 9 9038 0900","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO"},
             {"name":"La Querencia","zone":"pelluhue","area":"Pelluhue","level":"standard","types":["pareja"],"price":"Consultar","phone":"+56 9 3008 7565","ig":"https://www.instagram.com/laquerencia_pelluhue_/","status":"verified","travel":"≈ 25–30 min","phoneVerification":"NO VERIFICADO","mapQuery":"-35.814642058581406,-72.57722270684327"},
@@ -845,9 +853,34 @@
 
         function getSocialIcons(x) {
             let h = '';
-            if(x.fb) h += `<a href="${x.fb}" target="_blank" class="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-500/20 border border-blue-500/50 text-blue-400 hover:bg-blue-500 hover:text-white transition-all shadow-[0_0_10px_rgba(59,130,246,0.2)] hover:scale-110" title="Facebook"><svg viewBox="0 0 24 24" class="w-4 h-4 fill-current"><path d="M14.25 21v-7.05h2.75l.41-3.22h-3.16V8.67c0-.93.26-1.56 1.61-1.56h1.69V4.23c-.29-.04-1.29-.13-2.44-.13-2.42 0-4.07 1.48-4.07 4.21v2.42H8.3v3.22h2.74V21h3.21Z"/></svg></a>`;
-            if(x.ig) h += `<a href="${x.ig}" target="_blank" class="flex items-center justify-center w-8 h-8 rounded-lg bg-pink-500/20 border border-pink-500/50 text-pink-400 hover:bg-pink-500 hover:text-white transition-all shadow-[0_0_10px_rgba(236,72,153,0.2)] hover:scale-110" title="Instagram"><svg viewBox="0 0 24 24" class="w-4 h-4 fill-transparent stroke-current stroke-[2.4]" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.1"/><circle cx="17.2" cy="6.8" r="1.15" class="fill-current stroke-none"/></svg></a>`;
-            if(x.web) h += `<a href="${x.web}" target="_blank" class="flex items-center justify-center w-8 h-8 rounded-lg bg-gray-400/20 border border-gray-400/50 text-gray-300 hover:bg-gray-400 hover:text-black transition-all shadow-[0_0_10px_rgba(156,163,175,0.2)] hover:scale-110" title="Sitio Web"><svg viewBox="0 0 24 24" class="w-4 h-4 fill-transparent stroke-current stroke-[2.1]" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3.5 12h17M12 3c2.25 2.45 3.4 5.45 3.4 9S14.25 18.55 12 21M12 3C9.75 5.45 8.6 8.45 8.6 12S10.25 18.55 12 21"/></svg></a>`;
+            
+            // 1. WhatsApp
+            let phoneToUse = (x.whatsappPhones && x.whatsappPhones.length > 0) ? x.whatsappPhones[0] : (x.phone ? x.phone : null);
+            if(phoneToUse) {
+                let clean = phoneToUse.replace(/\D/g,'');
+                let msg = encodeURIComponent("Hola, deseo consultar disponibilidad para el 16 de enero de 2027.");
+                h += `<a href="https://wa.me/${clean}?text=${msg}" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-xl bg-neon-green/20 border border-neon-green/50 text-neon-green hover:bg-neon-green hover:text-black transition-all shadow-[0_0_10px_rgba(57,255,20,0.2)] hover:scale-110" title="WhatsApp"><svg viewBox="0 0 24 24" class="w-5 h-5 fill-current"><path d="M20.52 3.48A11.86 11.86 0 0 0 12.08.01a11.94 11.94 0 0 0-10.3 17.92L.36 23.64l5.86-1.38a11.93 11.93 0 0 0 5.85 1.53h.01a11.91 11.91 0 0 0 8.44-20.31ZM12.08 21.81h-.01a9.93 9.93 0 0 1-5.06-1.38l-.36-.22-3.48.82.84-3.39-.23-.37a9.9 9.9 0 1 1 8.3 4.54Zm5.44-7.43c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.95 1.17-.18.2-.35.22-.65.07-.3-.15-1.27-.47-2.41-1.49-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.21-.24-.58-.49-.5-.67-.51-.17-.01-.37-.01-.57-.01s-.52.07-.79.37c-.27.3-1.03 1.01-1.03 2.47s1.06 2.86 1.21 3.06c.15.2 2.08 3.17 5.04 4.45.7.3 1.24.48 1.66.62.7.22 1.33.19 1.83.12.56-.08 1.77-.72 2.02-1.41.25-.69.25-1.28.17-1.41-.07-.12-.27-.2-.57-.35Z"/></svg></a>`;
+            }
+            
+            // 2. Google Maps
+            let mapQ = x.mapQuery ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(x.mapQuery)}` : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(x.name + " " + x.zone + " Chile")}`;
+            h += `<a href="${mapQ}" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-xl bg-neon-cyan/20 border border-neon-cyan/50 text-neon-cyan hover:bg-neon-cyan hover:text-black transition-all shadow-[0_0_10px_rgba(0,243,255,0.2)] hover:scale-110" title="Ubicación"><svg viewBox="0 0 24 24" class="w-5 h-5 fill-current"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg></a>`;
+
+            // 3. Facebook
+            if(x.fb) h += `<a href="${x.fb}" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-500/50 text-blue-400 hover:bg-blue-500 hover:text-white transition-all shadow-[0_0_10px_rgba(59,130,246,0.2)] hover:scale-110" title="Facebook"><svg viewBox="0 0 24 24" class="w-5 h-5 fill-current"><path d="M14.25 21v-7.05h2.75l.41-3.22h-3.16V8.67c0-.93.26-1.56 1.61-1.56h1.69V4.23c-.29-.04-1.29-.13-2.44-.13-2.42 0-4.07 1.48-4.07 4.21v2.42H8.3v3.22h2.74V21h3.21Z"/></svg></a>`;
+            
+            // 4. Instagram
+            if(x.ig) h += `<a href="${x.ig}" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-xl bg-pink-500/20 border border-pink-500/50 text-pink-400 hover:bg-pink-500 hover:text-white transition-all shadow-[0_0_10px_rgba(236,72,153,0.2)] hover:scale-110" title="Instagram"><svg viewBox="0 0 24 24" class="w-5 h-5 fill-transparent stroke-current stroke-[2.4]" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.1"/><circle cx="17.2" cy="6.8" r="1.15" class="fill-current stroke-none"/></svg></a>`;
+            
+            // 5. Booking
+            if(x.booking) h += `<a href="${x.booking}" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-400/20 border border-blue-400/50 text-blue-400 hover:bg-blue-400 hover:text-black transition-all shadow-[0_0_10px_rgba(96,165,250,0.2)] hover:scale-110" title="Booking"><span class="font-bold text-[10px]">B.</span></a>`;
+            
+            // 6. Airbnb
+            if(x.airbnb) h += `<a href="${x.airbnb}" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-xl bg-[#FF5A5F]/20 border border-[#FF5A5F]/50 text-[#FF5A5F] hover:bg-[#FF5A5F] hover:text-black transition-all shadow-[0_0_10px_rgba(255,90,95,0.2)] hover:scale-110" title="Airbnb"><svg viewBox="0 0 24 24" class="w-5 h-5 fill-current"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg></a>`;
+
+            // 7. Sitio Web
+            if(x.web) h += `<a href="${x.web}" target="_blank" class="flex items-center justify-center w-10 h-10 rounded-xl bg-gray-400/20 border border-gray-400/50 text-gray-300 hover:bg-gray-400 hover:text-black transition-all shadow-[0_0_10px_rgba(156,163,175,0.2)] hover:scale-110" title="Sitio Web"><svg viewBox="0 0 24 24" class="w-5 h-5 fill-transparent stroke-current stroke-[2.1]" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3.5 12h17M12 3c2.25 2.45 3.4 5.45 3.4 9S14.25 18.55 12 21M12 3C9.75 5.45 8.6 8.45 8.6 12S10.25 18.55 12 21"/></svg></a>`;
+            
             return h;
         }
 
@@ -871,42 +904,16 @@
             let phone1Html = x.phone ? `<a href="tel:${x.phone.replace(/\D/g,'')}" class="text-[11px] font-mono-code ${cText} hover:text-white transition-colors mb-1 inline-flex items-center gap-1.5 ${cGlow} hover:scale-105" style="text-shadow: 0 0 8px currentColor;"><i data-lucide="phone-call" class="w-3 h-3"></i> ${x.phone}</a>` : '';
             let phone2Html = x.phone2 ? `<a href="tel:${x.phone2.replace(/\D/g,'')}" class="text-[11px] font-mono-code ${cText} hover:text-white transition-colors mb-1 inline-flex items-center gap-1.5 ${cGlow} hover:scale-105" style="text-shadow: 0 0 8px currentColor;"><i data-lucide="phone-call" class="w-3 h-3"></i> ${x.phone2}</a>` : '';
 
-            let actionButtons = '';
-            
-            // Botón WhatsApp con Icono Real
-            let phoneToUse = (x.whatsappPhones && x.whatsappPhones.length > 0) ? x.whatsappPhones[0] : (x.phone ? x.phone : null);
-            if (phoneToUse) {
-                let clean = phoneToUse.replace(/\D/g,'');
-                let msg = encodeURIComponent("Hola, deseo consultar disponibilidad de alojamiento para el 16 de enero de 2027.");
-                actionButtons += `
-                <a href="https://wa.me/${clean}?text=${msg}" target="_blank" class="flex-1 min-w-[100px] text-center py-2.5 px-2 rounded-xl bg-black border border-[#25D366] text-[#25D366] text-[10px] font-bold uppercase hover:bg-[#25D366] hover:text-black transition-all flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(37,211,102,0.3)] group">
-                    <img src="https://img.icons8.com/color/96/whatsapp--v1.png" class="w-5 h-5 group-hover:brightness-0 transition-all">
-                    WhatsApp
-                </a>`;
-            }
-
-            // Botón Único de Google Maps (Ubicación Oficial)
-            let fotosQuery = encodeURIComponent(x.name + " " + (x.zone === 'chanco' ? 'Chanco' : (x.zone === 'pelluhue' ? 'Pelluhue' : 'Curanipe')) + " Chile");
-            let ubiLink = x.mapsLink ? x.mapsLink : (x.mapQuery ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(x.mapQuery)}` : `https://www.google.com/maps/search/?api=1&query=${fotosQuery}`);
-            
-            actionButtons += `
-            <a href="${ubiLink}" target="_blank" class="flex-1 min-w-[100px] text-center py-2.5 px-2 rounded-xl bg-black border border-white text-white text-[10px] font-bold uppercase hover:bg-white hover:text-black transition-all flex items-center justify-center gap-2 shadow-[0_0_10px_rgba(255,255,255,0.2)] group">
-                <img src="https://img.icons8.com/color/96/google-maps-new.png" class="w-5 h-5 group-hover:scale-110 transition-all">
-                Ubicación
-            </a>`;
-
-            // Booking / Airbnb Extras
-            let extraButtons = '';
-            if (x.booking) extraButtons += `<a href="${x.booking}" target="_blank" class="flex-1 text-center py-2 px-2 rounded-xl bg-black border border-blue-400 text-blue-400 text-[10px] font-bold uppercase hover:bg-blue-400 hover:text-black transition-all">🛏️ Booking</a>`;
-            if (x.airbnb) extraButtons += `<a href="${x.airbnb}" target="_blank" class="flex-1 text-center py-2 px-2 rounded-xl bg-black border border-[#FF5A5F] text-[#FF5A5F] text-[10px] font-bold uppercase hover:bg-[#FF5A5F] hover:text-black transition-all">🏠 Airbnb</a>`;
-
             let socialHtml = getSocialIcons(x);
+            let isAlojamientoVerified = x.status === 'verified' && (!x.phoneVerification || !x.phoneVerification.includes('NO VERIFICADO')) && (!x.locationVerification || !x.locationVerification.includes('NO VERIFICADO'));
+            const mainBadge = isAlojamientoVerified ? '' : '<span class="text-neon-orange bg-neon-orange/10 border border-neon-orange/30 px-1.5 py-0.5 rounded text-[8px] uppercase tracking-widest" title="Falta Confirmar Alojamiento">⚠️ No Verificado</span>';
             
             return `
             <div class="bg-black/60 border ${cBorder}/50 p-4 rounded-2xl flex flex-col justify-between w-full ${cHover} transition-all duration-300 gap-3">
                 <div>
                     <div class="flex justify-between items-start mb-2">
                         <h4 class="text-sm font-bold text-white pr-2 leading-tight ${cGlow}">${x.name}</h4>
+                        <div class="flex gap-1 shrink-0">${mainBadge}</div>
                     </div>
                     <p class="text-[10px] font-mono-code text-gray-300 mb-2">📍 ${x.area}</p>
                     
@@ -924,9 +931,7 @@
                     ${x.priceNote ? `<p class="text-[9px] text-gray-500 font-mono-code leading-tight mt-1">${x.priceNote}</p>` : ''}
                 </div>
                 <div>
-                    ${socialHtml ? `<div class="flex flex-wrap gap-2 mb-3">${socialHtml}</div>` : ''}
-                    <div class="flex flex-wrap gap-2 w-full mb-2">${actionButtons}</div>
-                    ${extraButtons ? `<div class="flex flex-wrap gap-2 w-full mt-2">${extraButtons}</div>` : ''}
+                    ${socialHtml ? `<div class="flex flex-wrap gap-2 pt-2">${socialHtml}</div>` : ''}
                 </div>
             </div>`;
         }
