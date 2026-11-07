@@ -211,16 +211,7 @@
                         </div>
                         
                         <div id="conditionalFields" class="hidden space-y-6">
-                            <div id="fiestaSection" class="hidden p-5 rounded-2xl bg-[#260515]/80 border-2 border-neon-magenta/60 space-y-4 shadow-[0_0_20px_rgba(255,0,127,0.25)]">
-                                <div class="flex items-center justify-center gap-2 text-neon-magenta font-bold font-mono-code text-xs uppercase">
-                                    <span>🎉</span> Invitación Especial a la Fiesta (Desde las 23:00 hrs)
-                                </div>
-                                <p class="text-[11px] text-gray-300 font-mono-code leading-relaxed text-center uppercase">
-                                    Tus hijos están cordialmente invitados a sumarse directamente a la fiesta, barra libre y festival electrónico post-cena. ¿Nos acompañarán?
-                                </p>
-                                <div id="fiestaListContainer" class="space-y-3 text-left font-mono-code text-xs"></div>
-                            </div>
-
+                            
                             <div id="foodSection" class="space-y-3 text-left">
                                 <label class="block text-xs font-mono-code text-neon-orange uppercase text-center mb-1 font-bold">Preferencia alimentaria por invitado</label>
                                 <div id="foodSelectorsContainer" class="space-y-3"></div>
@@ -300,7 +291,6 @@
         let guestCompanion = "";
         let hasCompanion = false;
         let kidsList = [];
-        let fiestaList = [];
         let allGuestsList = [];
         let globalResolvedParams = new URLSearchParams();
 
@@ -407,14 +397,15 @@
         function adjustVolume(val) { audioEl.volume = val; }
 
         function decodificarToken(token) {
-            let base64 = token.replace(/-/g, '+').replace(/_/g, '/');
-            while (base64.length % 4) { base64 += '='; }
-            const binStr = atob(base64);
-            const bytes = new Uint8Array(binStr.length);
-            for (let i = 0; i < binStr.length; i++) {
-                bytes[i] = binStr.charCodeAt(i);
+            try {
+                let base64 = token.replace(/-/g, '+').replace(/_/g, '/');
+                while (base64.length % 4) { base64 += '='; }
+                // Arreglo definitivo para recuperar las Ñ y Tildes
+                return decodeURIComponent(escape(atob(base64)));
+            } catch (err) {
+                console.error("Error en decodificación base:", err);
+                return "";
             }
-            return new TextDecoder('utf-8').decode(bytes);
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -426,7 +417,9 @@
             if (tokenId) {
                 try {
                     const decoded = decodificarToken(tokenId);
-                    params = new URLSearchParams(decoded);
+                    if (decoded) {
+                        params = new URLSearchParams(decoded);
+                    }
                     if (window.history && window.history.replaceState) {
                         window.history.replaceState(null, document.title, window.location.pathname);
                     }
@@ -449,44 +442,10 @@
                 }
             });
 
-            const f1 = params.get('fiesta1');
-            const f2 = params.get('fiesta2');
-            const f3 = params.get('fiesta3');
-            fiestaList = [];
-            [f1, f2, f3].forEach(f => {
-                if (f && f.toLowerCase() !== 'nan' && f.trim() !== '' && f.toLowerCase() !== 'no') {
-                    fiestaList.push(decodeURIComponent(f).trim().toUpperCase());
-                }
-            });
-
+            // Para el botón que los lleva a info.html, pasamos el mismo token crudo.
             const idVal = params.get('id') || tokenId || '';
-            const nVal = params.get('invitado') || params.get('n') || '';
-            const hVal = kidsList.join(',');
-            const infoQueryStr = `?id=${encodeURIComponent(idVal)}&n=${encodeURIComponent(nVal)}&hijos=${encodeURIComponent(hVal)}`;
-            
             const btnTicketInfo = document.getElementById('btnTicketInfo');
-            if (btnTicketInfo) btnTicketInfo.href = `info.html${infoQueryStr}`;
-
-            const fiestaSection = document.getElementById('fiestaSection');
-            const fiestaListContainer = document.getElementById('fiestaListContainer');
-            if (fiestaList.length > 0) {
-                fiestaSection.classList.remove('hidden');
-                fiestaListContainer.innerHTML = '';
-                fiestaList.forEach((fName, idx) => {
-                    const rowDiv = document.createElement('div');
-                    rowDiv.className = 'flex items-center justify-between p-2.5 rounded-xl bg-black/50 border border-magenta-800/50';
-                    rowDiv.innerHTML = `
-                        <span class="text-white font-bold">🕺 ${fName}</span>
-                        <select id="fiestaAttend_${idx}" class="px-3 py-1.5 rounded-lg bg-[#1f060f] border border-magenta-700/60 text-neon-magenta text-xs focus:outline-none focus:border-neon-magenta font-bold">
-                            <option value="SI">Asiste a la Fiesta ✅</option>
-                            <option value="NO">No Asiste ❌</option>
-                        </select>
-                    `;
-                    fiestaListContainer.appendChild(rowDiv);
-                });
-            } else {
-                fiestaSection.classList.add('hidden');
-            }
+            if (btnTicketInfo) btnTicketInfo.href = `info.html?id=${encodeURIComponent(idVal)}`;
 
             const greetingEl = document.getElementById('guestGreeting');
             const verboSpan = document.getElementById('verboUnion');
@@ -526,7 +485,7 @@
 
                 kidsList.forEach(k => allGuestsList.push(k));
                 const nombresFormateados = formatNamesList(allGuestsList);
-                nameForSearch = guestFullName; // Usamos la base para buscar con comodín
+                nameForSearch = guestFullName; 
 
                 if (allGuestsList.length > 1) {
                     let prefijo = (tratoRaw && tratoUpper !== 'NAN') ? tratoUpper : 'ESTIMADOS';
@@ -541,9 +500,7 @@
                     if (labelMsg) labelMsg.textContent = "¿Quieres dejarle un mensaje a los novios?";
                 }
 
-                let badgeText = `Invitados: ${nombresFormateados}`;
-                if (fiestaList.length > 0) badgeText += ` (Fiesta: ${fiestaList.join(', ')})`;
-                document.getElementById('guestBadge').textContent = badgeText;
+                document.getElementById('guestBadge').textContent = `Invitados: ${nombresFormateados}`;
 
                 if (allGuestsList.length === 2) {
                     attendanceSelect.innerHTML = `<option value="" disabled selected>-- Selecciona una opción --</option><option value="todos">¡Sí, asistiremos los dos!</option><option value="parcial">Asistirá solo uno de nosotros</option><option value="ninguno">Lamentablemente ninguno de los dos podrá asistir</option>`;
@@ -578,7 +535,6 @@
             submitBtn.textContent = "Sincronizando estado...";
 
             try {
-                // AQUI ESTA LA MAGIA DEL ASTERISCO (*): Busca coincidencias parciales sin asco.
                 const searchUrl = `https://sheetdb.io/api/v1/hkv8diej2nrg7/search?NOMBRE=*${encodeURIComponent(nameForSearch)}*&sheet=Respuestas_Web&casesensitive=false`;
                 const response = await fetch(searchUrl, {
                     headers: { 'Accept': 'application/json', 'Content-Type': 'application/json; charset=utf-8' }
@@ -767,14 +723,7 @@
                 const foodSummary = menuList.join(', ');
                 const guestAlergies = document.getElementById('guestAlergies').value.trim() || "Ninguna";
 
-                let fiestaDetails = [];
-                fiestaList.forEach((fName, idx) => {
-                    const sel = document.getElementById(`fiestaAttend_${idx}`);
-                    fiestaDetails.push(`${fName}: ${sel && sel.value === 'SI' ? 'Sí' : 'No'}`);
-                });
-
                 extraInfo = `Preferencia: [${foodSummary}] | Alergias/Restricciones: ${guestAlergies}`;
-                if (fiestaDetails.length > 0) extraInfo += ` | Fiesta (23:00): [${fiestaDetails.join(', ')}]`;
             } else {
                 const guestMessage = document.getElementById('guestMessage').value.trim() || "Sin mensaje";
                 extraInfo = `Mensaje: ${guestMessage}`;
