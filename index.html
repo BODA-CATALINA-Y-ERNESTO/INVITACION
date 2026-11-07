@@ -400,7 +400,7 @@
             try {
                 let base64 = token.replace(/-/g, '+').replace(/_/g, '/');
                 while (base64.length % 4) { base64 += '='; }
-                // Arreglo definitivo para recuperar las Ñ y Tildes
+                // Forzamos decodificación correcta para caracteres especiales y tildes
                 return decodeURIComponent(escape(atob(base64)));
             } catch (err) {
                 console.error("Error en decodificación base:", err);
@@ -467,7 +467,7 @@
                 if (greetingEl) greetingEl.innerHTML = `¡${saludoGrupo}!<br>ESTÁN INVITADOS AL RITUAL DE UNIÓN DE`;
                 if (verboSpan) verboSpan.textContent = "SEAN";
                 if (labelMsg) labelMsg.textContent = "¿Quieren dejarle un mensaje a los novios?";
-                document.getElementById('guestBadge').textContent = `Grupo Familiar: ${guestFullName}`;
+                document.getElementById('guestBadge').textContent = `Invitados: ${guestFullName}`;
                 attendanceSelect.innerHTML = `
                     <option value="" disabled selected>-- Selecciona una opción --</option>
                     <option value="todos">¡Sí, asistirá todo el grupo familiar!</option>
@@ -500,6 +500,7 @@
                     if (labelMsg) labelMsg.textContent = "¿Quieres dejarle un mensaje a los novios?";
                 }
 
+                // AQUI LIMPIAMOS LA BASURA DE LA FIESTA DEL RECUADRO NEGRO
                 document.getElementById('guestBadge').textContent = `Invitados: ${nombresFormateados}`;
 
                 if (allGuestsList.length === 2) {
