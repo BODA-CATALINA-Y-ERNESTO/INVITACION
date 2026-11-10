@@ -504,7 +504,8 @@
     <script>
         lucide.createIcons();
 
-        const SHEETDB_URL = "https://sheetdb.io/api/v1/hkv8diej2nrg7?sheet=Asistencia_Fiesta_y_Camping"; 
+        // AQUÍ ESTÁ EL CAMBIO DE LA API DE SHEETDB POR LA DE GOOGLE
+        const SHEETDB_URL = "https://script.google.com/macros/s/AKfycbzbjvX04Es4S1eyKsiJoFv7tlLZNEXR-hJgxgy8g_yQ_7dbN6C-v3t7D8wDEh27PdmP/exec?sheet=Asistencia_Fiesta_y_Camping"; 
         
         let guestFullName = "";
         let mainGuestSearchName = "";
@@ -638,7 +639,8 @@
 
         async function checkExistingInfoResponse(gName) {
             try {
-                const searchUrl = `https://sheetdb.io/api/v1/hkv8diej2nrg7/search?Nombre=*${encodeURIComponent(gName)}*&sheet=Asistencia_Fiesta_y_Camping&casesensitive=false`;
+                // AQUÍ ESTÁ EL CAMBIO DE LA API DE SHEETDB POR LA DE GOOGLE
+                const searchUrl = `https://script.google.com/macros/s/AKfycbzbjvX04Es4S1eyKsiJoFv7tlLZNEXR-hJgxgy8g_yQ_7dbN6C-v3t7D8wDEh27PdmP/exec?Nombre=*${encodeURIComponent(gName)}*&sheet=Asistencia_Fiesta_y_Camping&casesensitive=false`;
                 const response = await fetch(searchUrl, { headers: { 'Accept': 'application/json', 'Content-Type': 'application/json; charset=utf-8' } });
                 const data = await response.json();
                 
@@ -706,7 +708,8 @@
             const btn = document.getElementById('btn-enviar-fiesta'); const loader = document.getElementById('loader-fiesta');
             btn.disabled = true; loader.classList.remove('hidden');
             const payload = { data: [{ "ID_Invitado": tokenIdGlobal, "Nombre": guestFullName, "Confirma_Hijo_1": fiestaRespuestas['hijo1'] || '', "Confirma_Hijo_2": fiestaRespuestas['hijo2'] || '', "Confirma_Hijo_3": fiestaRespuestas['hijo3'] || '', "Camping": campingRespuesta }] };
-            fetch(SHEETDB_URL, { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json; charset=utf-8' }, body: JSON.stringify(payload) })
+            // AQUÍ ESTÁ EL CAMBIO DE LA API DE SHEETDB POR LA DE GOOGLE
+            fetch(SHEETDB_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain; charset=utf-8' }, body: JSON.stringify(payload) })
             .then(() => { document.getElementById('msg-exito-fiesta').classList.remove('hidden'); setTimeout(() => { document.getElementById('msg-exito-fiesta').classList.add('hidden'); }, 3000); })
             .catch(e => { alert("Error de conexión."); })
             .finally(() => { btn.disabled = false; loader.classList.add('hidden'); btn.innerHTML = `Actualizar Pase <span class="loader hidden ml-2" id="loader-fiesta"></span>`;});
@@ -716,7 +719,8 @@
             const btn = document.getElementById('btn-enviar-camping'); const loader = document.getElementById('loader-camping');
             btn.disabled = true; loader.classList.remove('hidden');
             const payload = { data: [{ "ID_Invitado": tokenIdGlobal, "Nombre": guestFullName, "Confirma_Hijo_1": fiestaRespuestas['hijo1'] || '', "Confirma_Hijo_2": fiestaRespuestas['hijo2'] || '', "Confirma_Hijo_3": fiestaRespuestas['hijo3'] || '', "Camping": campingRespuesta }] };
-            fetch(SHEETDB_URL, { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json; charset=utf-8' }, body: JSON.stringify(payload) })
+            // AQUÍ ESTÁ EL CAMBIO DE LA API DE SHEETDB POR LA DE GOOGLE
+            fetch(SHEETDB_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain; charset=utf-8' }, body: JSON.stringify(payload) })
             .then(() => { document.getElementById('msg-exito-camping').classList.remove('hidden'); setTimeout(() => { document.getElementById('msg-exito-camping').classList.add('hidden'); }, 3000); })
             .catch(e => { alert("Error de conexión."); })
             .finally(() => { btn.disabled = false; loader.classList.add('hidden'); btn.innerHTML = `Actualizar Respuesta <span class="loader hidden ml-2 border-t-black" id="loader-camping"></span>`; });

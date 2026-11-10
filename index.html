@@ -400,7 +400,6 @@
             try {
                 let base64 = token.replace(/-/g, '+').replace(/_/g, '/');
                 while (base64.length % 4) { base64 += '='; }
-                // Forzamos decodificación correcta para caracteres especiales y tildes
                 return decodeURIComponent(escape(atob(base64)));
             } catch (err) {
                 console.error("Error en decodificación base:", err);
@@ -442,7 +441,6 @@
                 }
             });
 
-            // Para el botón que los lleva a info.html, pasamos el mismo token crudo.
             const idVal = params.get('id') || tokenId || '';
             const btnTicketInfo = document.getElementById('btnTicketInfo');
             if (btnTicketInfo) btnTicketInfo.href = `info.html?id=${encodeURIComponent(idVal)}`;
@@ -500,7 +498,6 @@
                     if (labelMsg) labelMsg.textContent = "¿Quieres dejarle un mensaje a los novios?";
                 }
 
-                // AQUI LIMPIAMOS LA BASURA DE LA FIESTA DEL RECUADRO NEGRO
                 document.getElementById('guestBadge').textContent = `Invitados: ${nombresFormateados}`;
 
                 if (allGuestsList.length === 2) {
@@ -536,10 +533,8 @@
             submitBtn.textContent = "Sincronizando estado...";
 
             try {
-                const searchUrl = `https://sheetdb.io/api/v1/hkv8diej2nrg7/search?NOMBRE=*${encodeURIComponent(nameForSearch)}*&sheet=Respuestas_Web&casesensitive=false`;
-                const response = await fetch(searchUrl, {
-                    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json; charset=utf-8' }
-                });
+                const searchUrl = `https://script.google.com/macros/s/AKfycbzbjvX04Es4S1eyKsiJoFv7tlLZNEXR-hJgxgy8g_yQ_7dbN6C-v3t7D8wDEh27PdmP/exec?NOMBRE=*${encodeURIComponent(nameForSearch)}*&sheet=Respuestas_Web&casesensitive=false`;
+                const response = await fetch(searchUrl);
                 const data = await response.json();
 
                 if (data && data.length > 0) {
@@ -730,11 +725,11 @@
                 extraInfo = `Mensaje: ${guestMessage}`;
             }
 
-            const sheetDbUrl = "https://sheetdb.io/api/v1/hkv8diej2nrg7?sheet=Respuestas_Web"; 
+            const sheetDbUrl = "https://script.google.com/macros/s/AKfycbzbjvX04Es4S1eyKsiJoFv7tlLZNEXR-hJgxgy8g_yQ_7dbN6C-v3t7D8wDEh27PdmP/exec?sheet=Respuestas_Web"; 
             try {
                 await fetch(sheetDbUrl, {
                     method: 'POST',
-                    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json; charset=utf-8' },
+                    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
                     body: JSON.stringify({
                         data: [{
                             'NOMBRE': finalNameStr,
@@ -806,13 +801,13 @@
             const btnEdit = document.getElementById('btnCambiarRespuesta');
             if (btnEdit) { btnEdit.disabled = true; btnEdit.textContent = "Actualizando a pendiente..."; }
 
-            const sheetDbUrl = "https://sheetdb.io/api/v1/hkv8diej2nrg7?sheet=Respuestas_Web";
+            const sheetDbUrl = "https://script.google.com/macros/s/AKfycbzbjvX04Es4S1eyKsiJoFv7tlLZNEXR-hJgxgy8g_yQ_7dbN6C-v3t7D8wDEh27PdmP/exec?sheet=Respuestas_Web";
             const titularName = guestFullName || (allGuestsList.length > 0 ? allGuestsList[0] : "INVITADO GENERAL");
 
             try {
                 await fetch(sheetDbUrl, {
                     method: 'POST',
-                    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json; charset=utf-8' },
+                    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
                     body: JSON.stringify({
                         data: [{
                             'NOMBRE': titularName,
@@ -822,7 +817,7 @@
                         }]
                     })
                 });
-            } catch (err) { console.error("Error al actualizar a pendiente en SheetDB:", err); } 
+            } catch (err) { console.error("Error al actualizar a pendiente:", err); } 
             finally {
                 if (btnEdit) { btnEdit.disabled = false; btnEdit.textContent = "✏️ Cambiar mi respuesta"; }
             }
@@ -839,13 +834,13 @@
             const btnReset = document.getElementById('btnResetPendiente');
             if (btnReset) { btnReset.disabled = true; btnReset.textContent = "Actualizando..."; }
 
-            const sheetDbUrl = "https://sheetdb.io/api/v1/hkv8diej2nrg7?sheet=Respuestas_Web";
+            const sheetDbUrl = "https://script.google.com/macros/s/AKfycbzbjvX04Es4S1eyKsiJoFv7tlLZNEXR-hJgxgy8g_yQ_7dbN6C-v3t7D8wDEh27PdmP/exec?sheet=Respuestas_Web";
             const titularName = guestFullName || (allGuestsList.length > 0 ? allGuestsList[0] : "INVITADO GENERAL");
 
             try {
                 await fetch(sheetDbUrl, {
                     method: 'POST',
-                    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json; charset=utf-8' },
+                    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
                     body: JSON.stringify({
                         data: [{
                             'NOMBRE': titularName,
@@ -855,7 +850,7 @@
                         }]
                     })
                 });
-            } catch (err) { console.error("Error al resetear en SheetDB:", err); } 
+            } catch (err) { console.error("Error al resetear:", err); } 
             finally {
                 if (btnReset) { btnReset.disabled = false; btnReset.textContent = "⏳ Dejar en Pendiente"; }
             }
